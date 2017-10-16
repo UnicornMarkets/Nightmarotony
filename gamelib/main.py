@@ -19,7 +19,7 @@ def main():
     grass = pygame.image.load("resources/images/grass.png")
     player = pygame.image.load("resources/images/person.png")
     shelf = pygame.image.load("resources/images/shelf.png")
-    shelf2 = pygame.image.load("resources/images/222.jpg")
+    shelf_info = pygame.image.load("resources/images/shelf_info.png")
     while 1:
         screen.fill(0)
         for x in range(0, width // grass.get_width() + 1):
@@ -32,13 +32,13 @@ def main():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit(0)
-            if playerpos[0] >=-5 and playerpos[0] <=0 and playerpos[1] >=25 and playerpos[1] <=35 \
+            if playerpos[0] >=-15 and playerpos[0] <=10 and playerpos[1] >=15 and playerpos[1] <=45 \
                                 and event.type==pygame.MOUSEBUTTONDOWN:
                 screen1 = pygame.display.set_mode((width, height))
                 close = 1
                 while close:
                     screen1.fill(0)
-                    screen1.blit(shelf2, [0,30])
+                    screen1.blit(shelf_info, [40,100])
                     pygame.display.flip()
                     for event in pygame.event.get():
                         if event.type == pygame.QUIT:
