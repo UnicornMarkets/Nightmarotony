@@ -12,7 +12,7 @@ from pygame.locals import *
 
 def main():
     pygame.init()
-    width, height = 640, 480
+    width, height = 800, 600
     keys = {'w': False, 's': False, 'a': False, 'd': False}
     playerpos = [100, 100]
     screen = pygame.display.set_mode((width, height))
@@ -26,28 +26,28 @@ def main():
                 pygame.quit()
                 exit(0)
             if event.type == pygame.KEYDOWN:
-                if event.key == K_w:
+                if event.key == K_w or event.key == K_UP:
                     keys['w'] = True
-                elif event.key == K_a:
+                elif event.key == K_a or event.key == K_LEFT:
                     keys['a'] = True
-                elif event.key == K_s:
+                elif event.key == K_s or event.key == K_DOWN:
                     keys['s'] = True
-                elif event.key == K_d:
+                elif event.key == K_d or event.key == K_RIGHT:
                     keys['d'] = True
             if event.type == pygame.KEYUP:
-                if event.key == pygame.K_w:
+                if event.key == pygame.K_w or event.key == K_UP:
                     keys['w'] = False
-                elif event.key == pygame.K_a:
+                elif event.key == pygame.K_a or event.key == K_LEFT:
                     keys['a'] = False
-                elif event.key == pygame.K_s:
+                elif event.key == pygame.K_s or event.key == K_DOWN:
                     keys['s'] = False
-                elif event.key == pygame.K_d:
+                elif event.key == pygame.K_d or event.key == K_RIGHT:
                     keys['d'] = False
         if keys['w']:
-            playerpos[1] -= 0.5
+            playerpos[1] -= 1.5
         elif keys['s']:
-            playerpos[1] += 0.5
+            playerpos[1] += 1.5
         if keys['a']:
-            playerpos[0] -= 0.5
+            playerpos[0] -= 1.5
         elif keys['d']:
-            playerpos[0] += 0.5
+            playerpos[0] += 1.5
