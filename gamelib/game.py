@@ -54,7 +54,7 @@ class Intro(object):
         while not self.start:
 
             cover.render(self.screen, (0, 0))
-            button = self.screen.blit(startbar, (120, 270))
+            button = self.screen.blit(startbar, (120, 100))
             pygame.transform.scale(self.screen, (2*const.WIDTH, 2*const.HEIGHT),
                                                                self.real_screen)
             pygame.display.flip()
