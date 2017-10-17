@@ -9,6 +9,7 @@ Members: Tony Sun, Dezhi Wang, Nathan Zhang, Stephanie Zhao, Mike Tamillow
 DEPENDENCIES:
 
 pygame
+PIL
 
 You might need to install some of these before running the game:
 
@@ -37,4 +38,3 @@ Move tony around with the arrow buttons, or left click the mouse. Use the right 
 LICENSE:
 
 GNU General Public License v3.0
-
