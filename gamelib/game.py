@@ -6,10 +6,12 @@ try:
     import gifimage
     from character import Character
     from shelf import Shelf
+    from state import State
 except:
     from gamelib import const, data, gifimage
     from gamelib.character import Character
     from gamelib.shelf import Shelf
+    from gamelib.state import State
 
 class GameWindow(object):
 
@@ -85,13 +87,14 @@ class Game(object):
     def __init__(self, window):
         self.window = window
         self.real_screen = window.screen
+        self.state = State()
         self.screen = pygame.surface.Surface((2*const.WIDTH, 2*const.HEIGHT))
         self.clock = pygame.time.Clock()
         self.sprites = pygame.sprite.Group()
         self.player = Character(self.sprites)
         self.shelf = Shelf((self.sprites))
         self.grass = pygame.image.load(data.filepath("Game", "grass.png"))
-        self.shelf_info = pygame.image.load(data.filepath("Game", "shelf_info.png"))
+
 
     def loop(self):
         while 1:
@@ -123,17 +126,7 @@ class Game(object):
 
             if self.player.rect.colliderect(self.shelf.rect):
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    close = 1
-                    screen1 = pygame.display.set_mode(
-                        (2 * const.WIDTH, 2 * const.HEIGHT))
-                    while close:
-                        screen1.fill(0)
-                        screen1.blit(self.shelf_info, [40, 100])
-                        pygame.display.flip()
-                        for event in pygame.event.get():
-                            if event.type == pygame.MOUSEBUTTONDOWN:
-                                close = 0
-
+                    self.state.run_state('shelf', self.real_screen)
         self.screen.blit(self.screen, (0, 0))
         pygame.transform.scale(self.screen,
                                (2 * const.WIDTH, 2 * const.HEIGHT),
