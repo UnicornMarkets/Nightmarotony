@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 
 from gamelib import main, main2
-from gamelib.main import Game
-#game = Game()
+from gamelib.game import GameWindow
+
 #game.main()
-main2.main()
+GameWindow()
