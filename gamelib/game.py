@@ -122,9 +122,6 @@ class Game(object):
                                 if event.type == pygame.MOUSEBUTTONDOWN:
                                     close = 0
 
-
-
-            self.screen.fill((100, 233, 12))
             self.screen.blit(self.screen, (0, 0))
             pygame.transform.scale(self.screen, (2*const.WIDTH, 2*const.HEIGHT),
                                                                self.real_screen)
