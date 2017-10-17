@@ -1,10 +1,15 @@
 import pygame
 
-import const
-import data
-import gifimage
-from character import Character
-from shelf import Shelf
+try:
+    import const
+    import data
+    import gifimage
+    from character import Character
+    from shelf import Shelf
+except:
+    from gamelib import const, data, gifimage
+    from gamelib.character import Character
+    from gamelib.shelf import Shelf
 
 class GameWindow(object):
 
