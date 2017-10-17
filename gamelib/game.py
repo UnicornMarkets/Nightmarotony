@@ -19,7 +19,7 @@ class GameWindow(object):
         try:
             pygame.mixer.init()
         except:
-            print 'Cannot load music.'
+            pass
         self.intro()
 
     def intro(self):
