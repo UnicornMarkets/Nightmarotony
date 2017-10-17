@@ -1,12 +1,14 @@
-Your Game Title
+Nightmarotony (naet-ma-rot-ony)
 ===============
 
-Entry in PyWeek #4  <http://www.pyweek.org/4/>
-Team: YOUR TEAM NAME (leave the "Team: bit")
-Members: YOUR TEAM MEMBERS (leave the "Members: bit")
+Entry in PyWeek #24  <http://www.pyweek.org/24/>
+Team: Unicorn Markets
+Members: Tony Sun, Dezhi Wang, Nathan Zhang, Stephanie Zhao, Mike Tamillow
 
 
 DEPENDENCIES:
+
+pygame
 
 You might need to install some of these before running the game:
 
@@ -28,13 +30,11 @@ Othewise open a terminal / console and "cd" to the game directory and run:
 
 HOW TO PLAY THE GAME:
 
-Move the cursor around the screen with the mouse.
-
-Press the left mouse button to fire the ducks.
+Move tony around with the arrow buttons, or left click the mouse. Use the right click or down button to pick things up and search.
 
 
 
 LICENSE:
 
-This game skellington is placed in the Public Domain.
+GNU General Public License v3.0
 
