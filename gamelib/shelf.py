@@ -1,8 +1,8 @@
 import pygame
 try:
-    import data
-except:
     from gamelib import data
+except:
+    import data
 from math import sqrt
 
 class Shelf(pygame.sprite.Sprite):

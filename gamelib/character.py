@@ -1,9 +1,9 @@
 import pygame
 from math import sqrt
 try:
-    import data
-except:
     from gamelib import data
+except:
+    import data
 
 class Character(pygame.sprite.Sprite):
     def __init__(self, *groups):
