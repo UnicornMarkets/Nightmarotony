@@ -1,4 +1,5 @@
 import pygame
+import time
 
 try:
     import const
@@ -44,16 +45,17 @@ class Intro(object):
     def loop(self):
 
         startbar = pygame.image.load(data.filepath("Cover", "start_button.png"))
-        cover = gifimage.GIFImage(data.filepath("Cover", "nightmarotony cover.gif"))
+        self.animate_title()
 
         pygame.transform.scale(self.screen, (2*const.WIDTH, 2*const.HEIGHT),
                                                             self.real_screen)
         pygame.display.update()
+        cover = pygame.image.load(data.filepath("Cover Image Sequence",
+                                                 start_string + "155"))
 
         self.start = False
         while not self.start:
 
-            cover.render(self.screen, (0, 0))
             button = self.screen.blit(startbar, (120, 100))
             pygame.transform.scale(self.screen, (2*const.WIDTH, 2*const.HEIGHT),
                                                                self.real_screen)
