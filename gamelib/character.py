@@ -1,5 +1,6 @@
 import pygame
 from math import sqrt
+import data
 
 class Character(pygame.sprite.Sprite):
     def __init__(self, *groups):
@@ -11,7 +12,7 @@ class Character(pygame.sprite.Sprite):
                           4: 'back', 5:'back_left', 6:'left', 7:'left_front'}
         self.now_direction = 0
         for animate in self.direction.values():
-            self.sprite_dict[animate] = pygame.image.load("resources/images/" + animate + ".png")
+            self.sprite_dict[animate] = pygame.image.load(data.filepath("Game", animate + ".png"))
         self.image = self.sprite_dict['front']
         image_size = self.image.get_size()
         self.rect = pygame.rect.Rect((320, 370), (image_size[0] / 2, image_size[1] / 2))
@@ -82,5 +83,3 @@ class Character(pygame.sprite.Sprite):
                 self.block_direction += [direction + 1]
         else:
             self.block_direction = []
-
-

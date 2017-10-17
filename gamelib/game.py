@@ -26,7 +26,7 @@ class Intro(object):
     def __init__(self, window):
         self.window = window
         self.real_screen = window.screen
-        self.screen = pygame.surface.Surface((const.WIDTH, const.HEIGHT))
+        self.screen = pygame.surface.Surface((2*const.WIDTH, 2*const.HEIGHT))
         #self.select_sound = pygame.mixer.Sound(data.filepath('click_mouse.wav'))
         #self.select_sound.set_volume(const.SOUND_VOLUME)
         #self.theme_sound = pygame.mixer.Sound(data.filepath('theme.wav'))
@@ -34,8 +34,8 @@ class Intro(object):
 
     def loop(self):
 
-        startbar = pygame.image.load(data.filename("start_button.png"))
-        cover = GIFImage(filepath("nightmarotony cover.gif"))
+        startbar = pygame.image.load(data.filepath("Cover", "start_button.png"))
+        cover = gifimage.GIFImage(data.filepath("Cover", "nightmarotony cover.gif"))
 
         pygame.transform.scale(self.screen, (2*const.WIDTH, 2*const.HEIGHT),
                                                             self.real_screen)
@@ -43,18 +43,18 @@ class Intro(object):
 
         self.start = False
         while not self.start:
+
+            cover.render(self.screen, (0, 0))
             button = self.screen.blit(startbar, (100, 240))
+            pygame.transform.scale(self.screen, (2*const.WIDTH, 2*const.HEIGHT),
+                                                               self.real_screen)
+            pygame.display.flip()
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     sys.exit()
                 else:
                     self.on_start(event, button)
-
-            cover.render(self.screen, (0, 0))
-            pygame.transform.scale(self.screen, (2*const.WIDTH, 2*const.HEIGHT),
-                                                               self.real_screen)
-            pygame.display.flip()
         return self.start
 
     def on_start(self, event, button):
