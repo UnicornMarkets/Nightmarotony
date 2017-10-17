@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" tiledversion="1.0.3" orientation="orthogonal" renderorder="right-down" width="30" height="30" tilewidth="32" tileheight="32" nextobjectid="183">
+ <tileset firstgid="1" source="old1.tsx"/>
+ <tileset firstgid="401" source="old2.tsx"/>
+ <tileset firstgid="785" source="old0.tsx"/>
+ <tileset firstgid="905" source="tileset2.tsx"/>
+ <tileset firstgid="1015" source="tileset3.tsx"/>
+ <layer name="Tile Layer 1" width="30" height="30">
+  <data encoding="base64" compression="zlib">
+   eJydlktsjUEUx8/0LlhQKkGTNqIULZIKt2hVSai2Fk1ZeLW3RLAQSZMu6IaNR7EgEe/HSkUkVY8NIpKq14IFiSYeCxYEyWVDbkJI/E/mnMx80+9qr8UvZ2a++b7/nG/OnDnjEkRF4AQRnQSnwCgwRuw5cB5ckL4/5ww4K3MKwDjQOQyWgreG6CJsN+gFV8FkMFUs96+L7ZV53fKsR8ZLwTQwPUfdW7C3QT+4D5JggVjuPxTbL/N0Tp/XfgSqc9R9CvsMvAQDnl0p9lUwPhD0G8Br0JSj7jvY96DtP0mDr2BzjrrfYX9430nlqEv4hgE7c9QdAUaaqGY6Zh081pUX1Zwr7y36D90iUGzc91PiQ1ugHY6F5Lq/FWBO8M20aKW9tv+8I0b3NLlzna3t6y4Dy030eymh1dPcOMQ+XyaXA66QO/890r4BbtK/4/kj+Aw+if0yjDXcJZcD7oElCdvuI3fGHw+h+xP8AqV4/hv2zxC+alxrrPEaGxNujXrWvsXoNmPeKpk7GuP5xuqOBQXG7cEMtMuGiLFwPay7CWchzwzW3QDNloSdVwKmiC4zzdPhM1Pj9TvIxZ+OhXvCzzqhO8FE8wb7ugVsFX8rMT4fLBSqYvzLBD7pf05TvL/lsDNNNG+or3H/qTUG1c14+hlPJ87nxRivNdG84fsaxkk2XT+XpQL/4/xdBbva02W7F+wD+8GBmH4XOAgOia6eI/W3zLgzn21/w3ieCFsYcJRsnvFrCq072ry9jIuzbLp8d/jxrLqzPSrAGrL55xrZmmM69qEStAf/UX0Oc2moPd5E45l1fQpFdzvZ/POAbM0xJ2FzkOaQSSYaT8ksZzpbPLPWLA/2dzfYQ7aWIBP1qyroT/L0tK05KOPphvHMWvlk74zjYrl/DOwA6zBnPZ810GJsjtH/6v/fpHFnV89lUnJbXDyzrtaIJWIvgXlk75hkwt4vvL/tJrqP7JefX7Wt51Jjjn3WeC4TXY5drhP5zqgUewfUk71jahP2fuH9fUKuJkpKvlHfUhTNtWFO03iuIZevqmNyFdeTz8ELsVwzviFXEzFbgvwal39UW+O5mVy+Wp5wOd63H8BO5PNdee4/FQdx20GD64+5nr+qq/GsulznNGXJzVzHHQFH89x6w5pouGg86/5qnVMHVhi7Vm3XG6dbLvHIcxvkWZ3Mrw/G9F3/WaO8r/u71gw+K3671RvbFjMWNy8cY8u5/TDZ//wXERqDIQ==
+  </data>
+ </layer>
+ <objectgroup name="Object Layer 1">
+  <object id="6" name="blocker" gid="974" x="896" y="736" width="32" height="32"/>
+  <object id="7" name="blocker" gid="974" x="895.998" y="704" width="32" height="32"/>
+  <object id="8" name="blocker" gid="974" x="896" y="672" width="32" height="32"/>
+  <object id="9" name="blocker" gid="974" x="896" y="640" width="32" height="32"/>
+  <object id="10" name="blocker" gid="974" x="896" y="608" width="32" height="32"/>
+  <object id="11" name="blocker" gid="974" x="896" y="576" width="32" height="32"/>
+  <object id="12" name="blocker" gid="974" x="896" y="544" width="32" height="32"/>
+  <object id="13" name="blocker" gid="974" x="896" y="512" width="32" height="32"/>
+  <object id="14" name="blocker" gid="974" x="896" y="480" width="32" height="32"/>
+  <object id="15" name="blocker" gid="974" x="896" y="448" width="32" height="32"/>
+  <object id="16" name="blocker" gid="974" x="896" y="416" width="32" height="32"/>
+  <object id="17" name="blocker" gid="974" x="896" y="384" width="32" height="32"/>
+  <object id="20" name="blocker" gid="974" x="832" y="960" width="32" height="32"/>
+  <object id="21" name="blocker" gid="974" x="32" y="928" width="32" height="32"/>
+  <object id="22" name="blocker" gid="974" x="896" y="896" width="32" height="32"/>
+  <object id="23" name="blocker" gid="974" x="896" y="864" width="32" height="32"/>
+  <object id="24" name="blocker" gid="974" x="896" y="832" width="32" height="32"/>
+  <object id="25" name="blocker" gid="974" x="896" y="800" width="32" height="32"/>
+  <object id="26" name="blocker" gid="974" x="896" y="768" width="32" height="32"/>
+  <object id="27" name="blocker" gid="974" x="416" y="960" width="32" height="32"/>
+  <object id="28" name="blocker" gid="974" x="448" y="960" width="32" height="32"/>
+  <object id="29" name="blocker" gid="974" x="480" y="960" width="32" height="32"/>
+  <object id="30" name="blocker" gid="974" x="512" y="960" width="32" height="32"/>
+  <object id="31" name="blocker" gid="974" x="800" y="960" width="32" height="32"/>
+  <object id="32" name="blocker" gid="974" x="768" y="960" width="32" height="32"/>
+  <object id="33" name="blocker" gid="974" x="736" y="960" width="32" height="32"/>
+  <object id="34" name="blocker" gid="974" x="704" y="960" width="32" height="32"/>
+  <object id="35" name="blocker" gid="974" x="672" y="960" width="32" height="32"/>
+  <object id="36" name="blocker" gid="974" x="576" y="960" width="32" height="32"/>
+  <object id="37" name="blocker" gid="974" x="608" y="960" width="32" height="32"/>
+  <object id="38" name="blocker" gid="974" x="544" y="960" width="32" height="32"/>
+  <object id="39" name="blocker" gid="974" x="640" y="960" width="32" height="32"/>
+  <object id="40" name="blocker" gid="974" x="864" y="960" width="32" height="32"/>
+  <object id="41" name="blocker" gid="974" x="384" y="928" width="32" height="32"/>
+  <object id="42" name="blocker" gid="974" x="384" y="896" width="32" height="32"/>
+  <object id="43" name="blocker" gid="974" x="384" y="864" width="32" height="32"/>
+  <object id="44" name="blocker" gid="974" x="384" y="768" width="32" height="32"/>
+  <object id="45" name="blocker" gid="974" x="384" y="736" width="32" height="32"/>
+  <object id="46" name="blocker" gid="974" x="384" y="800" width="32" height="32"/>
+  <object id="47" name="blocker" gid="974" x="384" y="832" width="32" height="32"/>
+  <object id="53" name="blocker" gid="974" x="320" y="960" width="32" height="32"/>
+  <object id="54" name="blocker" gid="974" x="160" y="960" width="32" height="32"/>
+  <object id="56" name="blocker" gid="974" x="64" y="960" width="32" height="32"/>
+  <object id="57" name="blocker" gid="974" x="224" y="960" width="32" height="32"/>
+  <object id="58" name="blocker" gid="974" x="352" y="960" width="32" height="32"/>
+  <object id="59" name="blocker" gid="974" x="128" y="960" width="32" height="32"/>
+  <object id="60" name="blocker" gid="974" x="192" y="960" width="32" height="32"/>
+  <object id="61" name="blocker" gid="974" x="288" y="960" width="32" height="32"/>
+  <object id="62" name="blocker" gid="974" x="96" y="960" width="32" height="32"/>
+  <object id="63" name="blocker" gid="974" x="256" y="960" width="32" height="32"/>
+  <object id="67" name="blocker" gid="974" x="32" y="480" width="32" height="32"/>
+  <object id="68" name="blocker" gid="974" x="192" y="800" width="32" height="32"/>
+  <object id="69" name="blocker" gid="974" x="32" y="512" width="32" height="32"/>
+  <object id="70" name="blocker" gid="974" x="32" y="160" width="32" height="32"/>
+  <object id="71" name="blocker" gid="974" x="192" y="704" width="32" height="32"/>
+  <object id="73" name="blocker" gid="974" x="32" y="352" width="32" height="32"/>
+  <object id="74" name="blocker" gid="974" x="32" y="416" width="32" height="32"/>
+  <object id="75" name="blocker" gid="974" x="32" y="544" width="32" height="32"/>
+  <object id="76" name="blocker" gid="974" x="32" y="128" width="32" height="32"/>
+  <object id="77" name="blocker" gid="974" x="32" y="448" width="32" height="32"/>
+  <object id="78" name="blocker" gid="974" x="32" y="192" width="32" height="32"/>
+  <object id="79" name="blocker" gid="974" x="32" y="288" width="32" height="32"/>
+  <object id="80" name="blocker" gid="974" x="32" y="320" width="32" height="32"/>
+  <object id="81" name="blocker" gid="974" x="32" y="384" width="32" height="32"/>
+  <object id="82" name="blocker" gid="974" x="32" y="224" width="32" height="32"/>
+  <object id="83" name="blocker" gid="974" x="32" y="256" width="32" height="32"/>
+  <object id="85" name="blocker" gid="974" x="288" y="800" width="32" height="32"/>
+  <object id="86" name="blocker" gid="974" x="352" y="800" width="32" height="32"/>
+  <object id="87" name="blocker" gid="974" x="256" y="800" width="32" height="32"/>
+  <object id="88" name="blocker" gid="974" x="256" y="768" width="32" height="32"/>
+  <object id="89" name="blocker" gid="974" x="64" y="800" width="32" height="32"/>
+  <object id="90" name="blocker" gid="974" x="160" y="800" width="32" height="32"/>
+  <object id="91" name="blocker" gid="974" x="96" y="800" width="32" height="32"/>
+  <object id="92" name="blocker" gid="974" x="128" y="768" width="32" height="32"/>
+  <object id="94" name="blocker" gid="974" x="32" y="896" width="32" height="32"/>
+  <object id="95" name="blocker" gid="974" x="32" y="928" width="32" height="32"/>
+  <object id="96" name="blocker" gid="974" x="32" y="832" width="32" height="32"/>
+  <object id="97" name="blocker" gid="974" x="32" y="864" width="32" height="32"/>
+  <object id="99" name="blocker" gid="974" x="64" y="576" width="32" height="32"/>
+  <object id="100" name="blocker" gid="974" x="288" y="576" width="32" height="32"/>
+  <object id="101" name="blocker" gid="974" x="352" y="576" width="32" height="32"/>
+  <object id="102" name="blocker" gid="974" x="160" y="576" width="32" height="32"/>
+  <object id="103" name="blocker" gid="974" x="224" y="576" width="32" height="32"/>
+  <object id="104" name="blocker" gid="974" x="96" y="576" width="32" height="32"/>
+  <object id="105" name="blocker" gid="974" x="256" y="576" width="32" height="32"/>
+  <object id="106" name="blocker" gid="974" x="192" y="576" width="32" height="32"/>
+  <object id="107" name="blocker" gid="974" x="128" y="576" width="32" height="32"/>
+  <object id="108" name="blocker" gid="974" x="320" y="576" width="32" height="32"/>
+  <object id="109" name="blocker" gid="974" x="288" y="672" width="32" height="32"/>
+  <object id="110" name="blocker" gid="974" x="384" y="576" width="32" height="32"/>
+  <object id="111" name="blocker" gid="974" x="320" y="672" width="32" height="32"/>
+  <object id="112" name="blocker" gid="974" x="224" y="672" width="32" height="32"/>
+  <object id="113" name="blocker" gid="974" x="256" y="672" width="32" height="32"/>
+  <object id="114" name="blocker" gid="974" x="384" y="672" width="32" height="32"/>
+  <object id="115" name="blocker" gid="974" x="352" y="672" width="32" height="32"/>
+  <object id="116" name="blocker" gid="974" x="384" y="96" width="32" height="32"/>
+  <object id="117" name="blocker" gid="974" x="320" y="96" width="32" height="32"/>
+  <object id="118" name="blocker" gid="974" x="416" y="96" width="32" height="32"/>
+  <object id="119" name="blocker" gid="974" x="448" y="96" width="32" height="32"/>
+  <object id="120" name="blocker" gid="974" x="160" y="96" width="32" height="32"/>
+  <object id="121" name="blocker" gid="974" x="64" y="96" width="32" height="32"/>
+  <object id="122" name="blocker" gid="974" x="480" y="96" width="32" height="32"/>
+  <object id="123" name="blocker" gid="974" x="224" y="96" width="32" height="32"/>
+  <object id="124" name="blocker" gid="974" x="352" y="96" width="32" height="32"/>
+  <object id="125" name="blocker" gid="974" x="512" y="96" width="32" height="32"/>
+  <object id="126" name="blocker" gid="974" x="128" y="96" width="32" height="32"/>
+  <object id="127" name="blocker" gid="974" x="192" y="96" width="32" height="32"/>
+  <object id="128" name="blocker" gid="974" x="288" y="96" width="32" height="32"/>
+  <object id="129" name="blocker" gid="974" x="96" y="96" width="32" height="32"/>
+  <object id="130" name="blocker" gid="974" x="256" y="96" width="32" height="32"/>
+  <object id="131" name="blocker" gid="974" x="800" y="352" width="32" height="32"/>
+  <object id="132" name="blocker" gid="974" x="736" y="352" width="32" height="32"/>
+  <object id="133" name="blocker" gid="974" x="832" y="352" width="32" height="32"/>
+  <object id="134" name="blocker" gid="974" x="672" y="352" width="32" height="32"/>
+  <object id="135" name="blocker" gid="974" x="608" y="352" width="32" height="32"/>
+  <object id="136" name="blocker" gid="974" x="704" y="352" width="32" height="32"/>
+  <object id="138" name="blocker" gid="974" x="640" y="352" width="32" height="32"/>
+  <object id="139" name="blocker" gid="974" x="768" y="352" width="32" height="32"/>
+  <object id="140" name="blocker" gid="974" x="864" y="352" width="32" height="32"/>
+  <object id="142" name="blocker" gid="974" x="608" y="224" width="32" height="32"/>
+  <object id="143" name="blocker" gid="974" x="608" y="160" width="32" height="32"/>
+  <object id="144" name="blocker" gid="974" x="608" y="192" width="32" height="32"/>
+  <object id="145" name="blocker" gid="974" x="608" y="256" width="32" height="32"/>
+  <object id="146" name="blocker" gid="974" x="608" y="96" width="32" height="32"/>
+  <object id="147" name="blocker" gid="974" x="608" y="128" width="32" height="32"/>
+  <object id="151" name="blocker" gid="974" x="544" y="96" width="32" height="32"/>
+  <object id="152" name="blocker" gid="974" x="576" y="96" width="32" height="32"/>
+  <object id="153" name="blocker" gid="974" x="896" y="928" width="32" height="32"/>
+  <object id="157" name="door" gid="71" x="224" y="800" width="32" height="32"/>
+  <object id="160" name="start point" gid="75" x="192" y="128" width="32" height="32"/>
+  <object id="161" name="blocker" gid="974" x="608" y="320" width="32" height="32"/>
+  <object id="162" name="blocker" gid="974" x="608" y="288" width="32" height="32"/>
+  <object id="165" name="blocker" gid="974" x="256" y="736" width="32" height="32"/>
+  <object id="166" name="blocker" gid="974" x="352" y="736" width="32" height="32"/>
+  <object id="167" name="blocker" gid="974" x="192" y="736" width="32" height="32"/>
+  <object id="168" name="blocker" gid="974" x="320" y="736" width="32" height="32"/>
+  <object id="169" name="blocker" gid="974" x="288" y="736" width="32" height="32"/>
+  <object id="170" name="blocker" gid="974" x="384" y="640" width="32" height="32"/>
+  <object id="171" name="blocker" gid="974" x="384" y="608" width="32" height="32"/>
+  <object id="172" name="blocker" gid="974" x="320" y="800" width="32" height="32"/>
+  <object id="173" name="blocker" gid="974" x="192" y="768" width="32" height="32"/>
+  <object id="174" name="portal" gid="53" x="128" y="800" width="32" height="32"/>
+  <object id="177" name="book" gid="1106" x="256" y="416" width="32" height="32"/>
+ </objectgroup>
+</map>
