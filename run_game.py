@@ -1,4 +1,5 @@
 #! /usr/bin/env python
 
-from gamelib import main
-main.main()
+from gamelib.main import Game
+game = Game()
+game.main()
