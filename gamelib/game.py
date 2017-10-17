@@ -44,7 +44,7 @@ class Intro(object):
 
     def loop(self):
 
-        startbar = pygame.image.load(data.filepath("Cover", "start_button.png"))
+        startbar = pygame.image.load(data.filepath("Cover", "startbutton-27.png"))
         self.animate_title()
 
         pygame.transform.scale(self.screen, (2*const.WIDTH, 2*const.HEIGHT),
@@ -127,16 +127,21 @@ class Game(object):
 
                 if self.player.rect.colliderect(self.shelf.rect):
                     if event.type==pygame.MOUSEBUTTONDOWN:
-                        close = 1
-                        while close:
+                        while 1:
                             self.screen.fill(0)
                             self.screen.blit(self.shelf_info, [40,100])
                             pygame.display.flip()
                             for event in pygame.event.get():
                                 if event.type == pygame.MOUSEBUTTONDOWN:
-                                    close = 0
+                                    break
 
             self.screen.blit(self.screen, (0, 0))
             pygame.transform.scale(self.screen, (2*const.WIDTH, 2*const.HEIGHT),
                                                                self.real_screen)
             pygame.display.flip()
+
+class State:
+
+    def __init__():
+
+    def loop():
