@@ -40,8 +40,8 @@ class Intro(object):
         self.screen = pygame.surface.Surface((2*const.WIDTH, 2*const.HEIGHT))
         #self.select_sound = pygame.mixer.Sound(data.filepath('click_mouse.wav'))
         #self.select_sound.set_volume(const.SOUND_VOLUME)
-        #self.theme_sound = pygame.mixer.Sound(data.filepath('theme.wav'))
-        #self.theme_sound.set_volume(const.SOUND_VOLUME)
+        pygame.mixer.music.load(data.filepath('Audio', 'welcome.mp3'))
+        pygame.mixer.music.play()
 
     def loop(self):
 
