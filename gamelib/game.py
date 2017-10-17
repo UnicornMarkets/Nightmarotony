@@ -34,7 +34,7 @@ class Intro(object):
 
     def loop(self):
 
-        startbar = pygame.image.load(data.filename("startbar.png"))
+        startbar = pygame.image.load(data.filename("start_button.png"))
         cover = GIFImage(filepath("nightmarotony cover.gif"))
 
         pygame.transform.scale(self.screen, (2*const.WIDTH, 2*const.HEIGHT),
