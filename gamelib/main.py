@@ -9,6 +9,7 @@ package.
 import data
 import pygame
 from gamelib.character import Character
+from gamelib.shelf import Shelf
 from pygame.locals import *
 
 class Game(object):
@@ -20,7 +21,7 @@ class Game(object):
         self.screen = pygame.display.set_mode((self.width, self.height))
         self.grass = pygame.image.load("resources/images/grass.png")
         self.player = Character(self.sprites)
-        self.shelf = pygame.image.load("resources/images/shelf.png")
+        self.shelf = Shelf((self.sprites))
         self.shelf_info = pygame.image.load("resources/images/shelf_info.png")
 
     def main(self):
@@ -32,8 +33,7 @@ class Game(object):
                     self.screen.blit(self.grass, (x * 100, y * 100))
 
             self.screen.blit(self.player.image, self.player.rect)
-            #screen.blit(player, playerpos)
-            self.screen.blit(self.shelf, (0, 30))
+            self.screen.blit(self.shelf.image, self.shelf.rect)
             pygame.display.flip()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -41,15 +41,15 @@ class Game(object):
                     exit(0)
                 if event.type == pygame.KEYDOWN:
                     self.player.update(self)
-                if self.player.rect.x >=-15 and self.player.rect.x <=10 and self.player.rect.y >=15 and self.player.rect.y <=45 \
-                                    and event.type==pygame.MOUSEBUTTONDOWN:
-                    screen1 = pygame.display.set_mode((self.width, self.height))
-                    close = 1
-                    while close:
-                        screen1.fill(0)
-                        screen1.blit(self.shelf_info, [40,100])
-                        pygame.display.flip()
-                        for event in pygame.event.get():
-                            if event.type == pygame.MOUSEBUTTONDOWN:
-                                close = 0
+
+                if self.player.rect.colliderect(self.shelf.rect) and event.type==pygame.MOUSEBUTTONDOWN:
+                        screen1 = pygame.display.set_mode((self.width, self.height))
+                        close = 1
+                        while close:
+                            screen1.fill(0)
+                            screen1.blit(self.shelf_info, [40,100])
+                            pygame.display.flip()
+                            for event in pygame.event.get():
+                                if event.type == pygame.MOUSEBUTTONDOWN:
+                                    close = 0
 
