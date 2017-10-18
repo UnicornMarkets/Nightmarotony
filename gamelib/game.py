@@ -97,13 +97,6 @@ class Intro(object):
                     self.start = True
                         #self.select_sound.play()
 
-    def animate_title(self):
-        for image_num in range(156):
-            num_str = '{0:03}'.format(image_num)
-            image = pygame.image.load(data.filepath("Cover Image Sequence", \
-                                         self.start_string + num_str + ".jpg"))
-            self.screen.blit(image, (0, 0))
-
 class Game(object):
 
     def __init__(self, window):
