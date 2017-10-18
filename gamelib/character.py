@@ -29,7 +29,7 @@ class Character(pygame.sprite.Sprite):
             self.sprite_dict[animate] = pygame.image.load(data.filepath("Game", animate + ".png"))
         self.image = self.sprite_dict['front']
         image_size = self.image.get_size()
-        self.rect = pygame.rect.Rect((320, 370), (image_size[0] / 2, image_size[1] / 2))
+        self.rect = pygame.rect.Rect((320, 370), (image_size[0], image_size[1]))
 
 
     def update(self, game):
@@ -85,7 +85,7 @@ class Character(pygame.sprite.Sprite):
                 self.check_block(shelf_rect, 2)
             if self.now_direction == 3:
                 self.rect.y += self.speed * game.dt
-                self.rect.x += self.speed * game.dt
+                self.rect.x += sqrt((self.speed ^ 2)/2) * game.dt
                 self.check_block(shelf_rect, 3)
             if self.now_direction == 4:
                 self.rect.y += self.speed * game.dt

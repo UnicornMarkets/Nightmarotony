@@ -6,12 +6,14 @@ try:
     import gifimage
     from character import Character
     from shelf import Shelf
+    from door import Door
     from state import State
 except:
     from gamelib import const, data, gifimage
     from gamelib.character import Character
     from gamelib.shelf import Shelf
     from gamelib.state import State
+    from gamelib.door import Door
 
 import pytmx
 from pytmx.util_pygame import load_pygame
@@ -118,29 +120,33 @@ class Game(object):
         self.sprites = pygame.sprite.Group()
         self.player = Character(self.sprites)
         self.shelf = Shelf((self.sprites))
+        self.door = Door((self.sprites))
         self.grass = pygame.image.load(data.filepath("Game", "grass.png"))
         self.map = load_pygame("Tilemap/tmx/Dungeon.tmx")
+        self.result = None
 
     def tmxmap(self):
-        print self.map
+        print(self.map)
 
     def loop(self):
-        print self.map
+        print(self.map)
         #props = self.get_tile_properties(x, y, layer)
-        print self.map.properties, 'property'
-        print self.map.layers, 'layer'
+        print(self.map.properties, 'property')
+        print(self.map.layers, 'layer')
         for layer in self.map.visible_layers:
-            print layer
+            print(layer)
         layer1 = self.map.get_layer_by_name("Tile Layer 1")
-        print layer1
+        print(layer1)
         object = self.map.objects
-        print self.map.objectgroups, 'object group'
+        print(self.map.objectgroups, 'object group')
 
 
-        print 123213213123
         while 1:
             self.views()
-            self.event_processor()
+            if self.result == None:
+                self.event_processor()
+            elif self.result == 'escape':
+                self.finish_game()
 
     def views(self):
         self.sprites.update(self)
@@ -151,6 +157,7 @@ class Game(object):
 
         self.screen.blit(self.player.image, self.player.rect)
         self.screen.blit(self.shelf.image, self.shelf.rect)
+        self.screen.blit(self.door.image, self.door.rect)
         pygame.display.flip()
 
     def event_processor(self):
@@ -171,8 +178,26 @@ class Game(object):
             if self.player.rect.colliderect(self.shelf.rect):
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     self.state.run_state('shelf', self.real_screen)
+
+            if self.player.rect.colliderect(self.door.rect):
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    self.result = self.state.run_state('door', self.real_screen)
+
         self.screen.blit(self.screen, (0, 0))
         pygame.transform.scale(self.screen,
                                (2 * const.WIDTH, 2 * const.HEIGHT),
                                self.real_screen)
         pygame.display.flip()
+
+    def finish_game(self):
+        self.screen = pygame.display.set_mode((700, 700))
+        success = pygame.image.load(filepath("Cover", "passed.png"))
+        while 1:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    return
+
+            self.screen.fill((255, 255, 255))
+            self.screen.blit(success, (200, 250))
+            pygame.display.flip()
