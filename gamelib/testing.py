@@ -10,7 +10,7 @@ class TestGame:
         pygame.init()
 
     def plain(self, test):
-        self.screen = pygame.display.set_mode((700, 700))
+        self.screen = pygame.display.set_mode((200, 200))
         while 1:
             
             for event in pygame.event.get():
@@ -19,8 +19,7 @@ class TestGame:
                     return
                 if test:
                     pygame.time.set_timer(pygame.QUIT, 1000)
-        
-
+    
             self.screen.fill((210, 100, 230))
             pygame.display.flip()
 
@@ -54,6 +53,20 @@ class TestGame:
             self.screen.fill((0,0,0))
             pygame.display.flip()
 
+    def success(self):
+        self.screen = pygame.display.set_mode((700, 700))
+        success = pygame.image.load(filepath("Cover", "passed.png"))
+        while 1:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    return
+        
+            self.screen.fill(0, 0, 0)
+            self.screen.blit(success, (300,300))
+            pygame.display.flip()
+
+
 if __name__ == "__main__":
     try:
         game = TestGame()
@@ -62,7 +75,8 @@ if __name__ == "__main__":
         game.gif(True)
         game = TestGame()
         game.level(True)
-        print("tests pass")
+        game = TestGame()
+        game.success()
     except Exception as e:
         print("tests failed")
         print(e)
