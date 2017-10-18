@@ -6,7 +6,6 @@ try:
     import gifimage
     from character import Character
     from shelf import Shelf
-    from state import State
 except:
     from gamelib import const, data, gifimage
     from gamelib.character import Character
@@ -156,6 +155,7 @@ class Level:
         pass
 
     def loop():
+        # loop to keep level running
         pass
 
 class State:
