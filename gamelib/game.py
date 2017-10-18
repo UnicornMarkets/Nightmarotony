@@ -43,10 +43,9 @@ class Intro(object):
         self.clock.tick(60)
         #self.select_sound = pygame.mixer.Sound(data.filepath('click_mouse.wav'))
         #self.select_sound.set_volume(const.SOUND_VOLUME)
-        #self.theme_sound = pygame.mixer.Sound(data.filepath('theme.wav'))
-        #self.theme_sound.set_volume(const.SOUND_VOLUME)
         pygame.mixer.music.load(data.filepath('Audio', 'welcome.mp3'))
-        pygame.mixer.music.play()
+        pygame.mixer.music.set_volume(const.SOUND_VOLUME)
+        pygame.mixer.music.play(-1)
 
     def loop(self):
 
@@ -83,7 +82,7 @@ class Intro(object):
                 if image_num == 155 and button:
                     self.on_start(event, button)
 
-        pygame.mixer.music.stop()
+        pygame.mixer.music.fadeout(const.FADEOU_TTIME)
         return self.start
 
     def on_start(self, event, button):
