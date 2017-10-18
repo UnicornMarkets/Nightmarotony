@@ -82,7 +82,7 @@ class Intro(object):
                     self.start = True
                     #self.select_sound.play()
 
-    def animate_title():
+    def animate_title(self):
         start_string = "nightmarotony cover_00"
         for image_num in range(156):
             pygame.image.load(data.filepath("Cover Image Sequence",
