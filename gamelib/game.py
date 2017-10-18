@@ -40,7 +40,7 @@ class Intro(object):
         self.screen = pygame.surface.Surface((2*const.WIDTH, 2*const.HEIGHT))
         self.start_string = "nightmarotony cover_00"
         self.clock = pygame.time.Clock()
-        self.clock.tick(24)
+        self.clock.tick(60)
         #self.select_sound = pygame.mixer.Sound(data.filepath('click_mouse.wav'))
         #self.select_sound.set_volume(const.SOUND_VOLUME)
         #self.theme_sound = pygame.mixer.Sound(data.filepath('theme.wav'))
@@ -65,7 +65,7 @@ class Intro(object):
 
             if image_num == 155:
                 button = self.screen.blit(startbar, (10, 300))
-            elif pygame.time.get_ticks() > last_time + 50:
+            elif pygame.time.get_ticks() > last_time + 10:
                 image_num += 1
                 num_str = '{0:03}'.format(image_num)
                 image = pygame.image.load(data.filepath("Cover Image Sequence", \
@@ -78,7 +78,7 @@ class Intro(object):
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     sys.exit()
-                if image_num == 155:
+                if image_num == 155 and button:
                     self.on_start(event, button)
 
         return self.start
