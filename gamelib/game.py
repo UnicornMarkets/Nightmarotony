@@ -38,34 +38,52 @@ class Intro(object):
         self.window = window
         self.real_screen = window.screen
         self.screen = pygame.surface.Surface((2*const.WIDTH, 2*const.HEIGHT))
+        self.start_string = "nightmarotony cover_00"
+        self.clock = pygame.time.Clock()
+        self.clock.tick(60)
         #self.select_sound = pygame.mixer.Sound(data.filepath('click_mouse.wav'))
         #self.select_sound.set_volume(const.SOUND_VOLUME)
+        #self.theme_sound = pygame.mixer.Sound(data.filepath('theme.wav'))
+        #self.theme_sound.set_volume(const.SOUND_VOLUME)
         pygame.mixer.music.load(data.filepath('Audio', 'welcome.mp3'))
         pygame.mixer.music.play()
 
     def loop(self):
 
-        startbar = pygame.image.load(data.filepath("Cover", "start_button.png"))
-        cover = gifimage.GIFImage(data.filepath("Cover", "nightmarotony cover.gif"))
+        startbar = pygame.image.load(data.filepath("Cover", "startbutton-27.png"))
+        image_num = 0
+        num_str = '{0:03}'.format(image_num)
+        image = pygame.image.load(data.filepath("Cover Image Sequence", \
+                                     self.start_string + num_str + ".jpg"))
 
         pygame.transform.scale(self.screen, (2*const.WIDTH, 2*const.HEIGHT),
                                                             self.real_screen)
         pygame.display.update()
-
         self.start = False
+        last_time = pygame.time.get_ticks()
         while not self.start:
 
-            cover.render(self.screen, (0, 0))
-            button = self.screen.blit(startbar, (120, 100))
+            self.screen.blit(image, (0, 0))
+
+            if image_num == 155:
+                button = self.screen.blit(startbar, (10, 300))
+            elif pygame.time.get_ticks() > last_time + 20:
+                image_num += 1
+                num_str = '{0:03}'.format(image_num)
+                image = pygame.image.load(data.filepath("Cover Image Sequence", \
+                                             self.start_string + num_str + ".jpg"))
+                last_time = pygame.time.get_ticks()
+
             pygame.transform.scale(self.screen, (2*const.WIDTH, 2*const.HEIGHT),
                                                                self.real_screen)
             pygame.display.flip()
-
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     sys.exit()
-                else:
+                if image_num == 155 and button:
                     self.on_start(event, button)
+
+        pygame.mixer.music.stop()
         return self.start
 
     def on_start(self, event, button):
@@ -80,7 +98,8 @@ class Intro(object):
                 position = pygame.mouse.get_pos()
                 if button.collidepoint(position):
                     self.start = True
-                    #self.select_sound.play()
+                        #self.select_sound.play()
+
 
 class Game(object):
 
