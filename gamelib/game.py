@@ -48,16 +48,12 @@ class Intro(object):
         self.start_string = "nightmarotony cover_00"
         self.clock = pygame.time.Clock()
         self.clock.tick(60)
-        #self.select_sound = pygame.mixer.Sound(data.filepath('click_mouse.wav'))
-        #self.select_sound.set_volume(const.SOUND_VOLUME)
-        #self.theme_sound = pygame.mixer.Sound(data.filepath('theme.wav'))
-        #self.theme_sound.set_volume(const.SOUND_VOLUME)
         pygame.mixer.music.load(data.filepath('Audio', 'welcome.mp3'))
         pygame.mixer.music.play()
 
     def loop(self):
 
-        startbar = pygame.image.load(data.filepath("Cover", "startbutton-27.png"))
+        startbar = pygame.image.load(data.filepath("Cover", "startbutton.png"))
         image_num = 0
         num_str = '{0:03}'.format(image_num)
         image = pygame.image.load(data.filepath("Cover Image Sequence", \
@@ -65,6 +61,7 @@ class Intro(object):
 
         pygame.transform.scale(self.screen, (2*const.WIDTH, 2*const.HEIGHT),
                                                             self.real_screen)
+        button = None
         pygame.display.update()
         self.start = False
         last_time = pygame.time.get_ticks()
@@ -73,7 +70,7 @@ class Intro(object):
             self.screen.blit(image, (0, 0))
 
             if image_num == 155:
-                button = self.screen.blit(startbar, (10, 300))
+                button = self.screen.blit(startbar, (250, 400))
             elif pygame.time.get_ticks() > last_time + 20:
                 image_num += 1
                 num_str = '{0:03}'.format(image_num)
@@ -201,3 +198,12 @@ class Game(object):
             self.screen.fill((255, 255, 255))
             self.screen.blit(success, (200, 250))
             pygame.display.flip()
+
+class Level:
+    def __init__():
+        # set up params to determine which level to make
+        pass
+
+    def loop():
+        # loop to keep level running
+        pass

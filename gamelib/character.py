@@ -77,8 +77,8 @@ class Character(pygame.sprite.Sprite):
                 self.rect.y -= self.speed * game.dt
                 self.check_block(shelf_rect, 0)
             if self.now_direction == 1:
-                self.rect.y -= self.speed * game.dt
-                self.rect.x += self.speed * game.dt
+                self.rect.y -= sqrt((self.speed ** 2)/2) * game.dt
+                self.rect.x += sqrt((self.speed ** 2)/2) * game.dt
                 self.check_block(shelf_rect, 1)
             if self.now_direction == 2:
                 self.rect.x += self.speed * game.dt
@@ -91,15 +91,15 @@ class Character(pygame.sprite.Sprite):
                 self.rect.y += self.speed * game.dt
                 self.check_block(shelf_rect, 4)
             if self.now_direction == 5:
-                self.rect.y += self.speed * game.dt
-                self.rect.x -= self.speed * game.dt
+                self.rect.y += sqrt((self.speed ** 2)/2) * game.dt
+                self.rect.x -= sqrt((self.speed ** 2)/2) * game.dt
                 self.check_block(shelf_rect, 5)
             if self.now_direction == 6:
                 self.rect.x -= self.speed * game.dt
                 self.check_block(shelf_rect, 6)
             if self.now_direction == 7:
-                self.rect.y -= self.speed * game.dt
-                self.rect.x -= self.speed * game.dt
+                self.rect.y -= sqrt((self.speed ** 2)/2) * game.dt
+                self.rect.x -= sqrt((self.speed ** 2)/2) * game.dt
                 self.check_block(shelf_rect, 7)
 
     def check_block(self, shelf_rect, direction):
