@@ -1,5 +1,5 @@
 import pygame
-
+import sys
 try:
     import const
     import data
@@ -13,11 +13,15 @@ except:
     from gamelib.shelf import Shelf
     from gamelib.state import State
 
+import pytmx
+from pytmx.util_pygame import load_pygame
+
 class GameWindow(object):
 
     def __init__(self):
         pygame.display.set_caption('Nightmarotony')
         self.screen = pygame.display.set_mode((2*const.WIDTH, 2*const.HEIGHT))
+
         try:
             pygame.mixer.init()
         except:
@@ -25,6 +29,7 @@ class GameWindow(object):
         self.intro()
 
     def intro(self):
+
         start = Intro(self).loop()
         if start:
             self.game()
@@ -114,9 +119,25 @@ class Game(object):
         self.player = Character(self.sprites)
         self.shelf = Shelf((self.sprites))
         self.grass = pygame.image.load(data.filepath("Game", "grass.png"))
+        self.map = load_pygame("Tilemap/tmx/Dungeon.tmx")
 
+    def tmxmap(self):
+        print self.map
 
     def loop(self):
+        print self.map
+        #props = self.get_tile_properties(x, y, layer)
+        print self.map.properties, 'property'
+        print self.map.layers, 'layer'
+        for layer in self.map.visible_layers:
+            print layer
+        layer1 = self.map.get_layer_by_name("Tile Layer 1")
+        print layer1
+        object = self.map.objects
+        print self.map.objectgroups, 'object group'
+
+
+        print 123213213123
         while 1:
             self.views()
             self.event_processor()
