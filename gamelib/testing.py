@@ -18,7 +18,7 @@ class TestGame:
                     pygame.quit()
                     return
                 if test:
-                    pygame.time.set_timer(pygame.QUIT, 1000)
+                    pygame.time.set_timer(pygame.QUIT, 100)
     
             self.screen.fill((210, 100, 230))
             pygame.display.flip()
@@ -33,7 +33,7 @@ class TestGame:
                     pygame.quit()
                     return
                 if test:
-                    pygame.time.set_timer(pygame.QUIT, 3000)
+                    pygame.time.set_timer(pygame.QUIT, 800)
         
 
             self.screen.fill((0,0,0))
@@ -48,7 +48,7 @@ class TestGame:
                     pygame.quit()
                     return
                 if test:
-                    pygame.time.set_timer(pygame.QUIT, 1000)
+                    pygame.time.set_timer(pygame.QUIT, 100)
 
             self.screen.fill((0,0,0))
             pygame.display.flip()
@@ -62,8 +62,8 @@ class TestGame:
                     pygame.quit()
                     return
         
-            self.screen.fill(0, 0, 0)
-            self.screen.blit(success, (300,300))
+            self.screen.fill((255, 255, 255))
+            self.screen.blit(success, (200,250))
             pygame.display.flip()
 
 
