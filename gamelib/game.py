@@ -1,5 +1,4 @@
 import pygame
-import time
 
 try:
     import const
@@ -7,10 +6,12 @@ try:
     import gifimage
     from character import Character
     from shelf import Shelf
+    from state import State
 except:
     from gamelib import const, data, gifimage
     from gamelib.character import Character
     from gamelib.shelf import Shelf
+    from gamelib.state import State
 
 class GameWindow(object):
 
@@ -37,6 +38,9 @@ class Intro(object):
         self.window = window
         self.real_screen = window.screen
         self.screen = pygame.surface.Surface((2*const.WIDTH, 2*const.HEIGHT))
+        self.start_string = "nightmarotony cover_00"
+        self.clock = pygame.time.Clock()
+        self.clock.tick(24)
         #self.select_sound = pygame.mixer.Sound(data.filepath('click_mouse.wav'))
         #self.select_sound.set_volume(const.SOUND_VOLUME)
         #self.theme_sound = pygame.mixer.Sound(data.filepath('theme.wav'))
@@ -45,27 +49,38 @@ class Intro(object):
     def loop(self):
 
         startbar = pygame.image.load(data.filepath("Cover", "startbutton-27.png"))
-        self.animate_title()
+        image_num = 0
+        num_str = '{0:03}'.format(image_num)
+        image = pygame.image.load(data.filepath("Cover Image Sequence", \
+                                     self.start_string + num_str + ".jpg"))
 
         pygame.transform.scale(self.screen, (2*const.WIDTH, 2*const.HEIGHT),
                                                             self.real_screen)
         pygame.display.update()
-        cover = pygame.image.load(data.filepath("Cover Image Sequence",
-                                                 start_string + "155"))
-
         self.start = False
+        last_time = pygame.time.get_ticks()
         while not self.start:
 
-            button = self.screen.blit(startbar, (120, 100))
+            self.screen.blit(image, (0, 0))
+
+            if image_num == 155:
+                button = self.screen.blit(startbar, (10, 300))
+            elif pygame.time.get_ticks() > last_time + 50:
+                image_num += 1
+                num_str = '{0:03}'.format(image_num)
+                image = pygame.image.load(data.filepath("Cover Image Sequence", \
+                                             self.start_string + num_str + ".jpg"))
+                last_time = pygame.time.get_ticks()
+
             pygame.transform.scale(self.screen, (2*const.WIDTH, 2*const.HEIGHT),
                                                                self.real_screen)
             pygame.display.flip()
-
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     sys.exit()
-                else:
+                if image_num == 155:
                     self.on_start(event, button)
+
         return self.start
 
     def on_start(self, event, button):
@@ -80,68 +95,62 @@ class Intro(object):
                 position = pygame.mouse.get_pos()
                 if button.collidepoint(position):
                     self.start = True
-                    #self.select_sound.play()
+                        #self.select_sound.play()
 
     def animate_title(self):
-        start_string = "nightmarotony cover_00"
         for image_num in range(156):
-            pygame.image.load(data.filepath("Cover Image Sequence",
-                                         start_string + str(image_num))
-            time.sleep(.04)
+            num_str = '{0:03}'.format(image_num)
+            image = pygame.image.load(data.filepath("Cover Image Sequence", \
+                                         self.start_string + num_str + ".jpg"))
+            self.screen.blit(image, (0, 0))
 
 class Game(object):
 
     def __init__(self, window):
         self.window = window
         self.real_screen = window.screen
+        self.state = State()
         self.screen = pygame.surface.Surface((2*const.WIDTH, 2*const.HEIGHT))
         self.clock = pygame.time.Clock()
         self.sprites = pygame.sprite.Group()
         self.player = Character(self.sprites)
         self.shelf = Shelf((self.sprites))
         self.grass = pygame.image.load(data.filepath("Game", "grass.png"))
-        self.shelf_info = pygame.image.load(data.filepath("Game", "shelf_info.png"))
+
 
     def loop(self):
         while 1:
-            self.screen.fill(0)
-            for x in range(0, 2*const.WIDTH // self.grass.get_width() + 1):
-                for y in range(0, 2*const.HEIGHT // self.grass.get_height() + 1):
-                    self.screen.blit(self.grass, (x * 100, y * 100))
+            self.views()
+            self.event_processor()
 
-            self.screen.blit(self.player.image, self.player.rect)
-            self.screen.blit(self.shelf.image, self.shelf.rect)
-            pygame.display.flip()
+    def views(self):
+        self.screen.fill(0)
+        for x in range(0, 2 * const.WIDTH // self.grass.get_width() + 1):
+            for y in range(0, 2 * const.HEIGHT // self.grass.get_height() + 1):
+                self.screen.blit(self.grass, (x * 100, y * 100))
 
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    exit(0)
+        self.screen.blit(self.player.image, self.player.rect)
+        self.screen.blit(self.shelf.image, self.shelf.rect)
+        pygame.display.flip()
 
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
-                        sys.exit()
+    def event_processor(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit(0)
 
-                if event.type == pygame.KEYDOWN:
-                    self.player.update(self)
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    sys.exit()
 
-                if self.player.rect.colliderect(self.shelf.rect):
-                    if event.type==pygame.MOUSEBUTTONDOWN:
-                        while 1:
-                            self.screen.fill(0)
-                            self.screen.blit(self.shelf_info, [40,100])
-                            pygame.display.flip()
-                            for event in pygame.event.get():
-                                if event.type == pygame.MOUSEBUTTONDOWN:
-                                    break
+            if event.type == pygame.KEYDOWN:
+                self.player.update(self)
 
-            self.screen.blit(self.screen, (0, 0))
-            pygame.transform.scale(self.screen, (2*const.WIDTH, 2*const.HEIGHT),
-                                                               self.real_screen)
-            pygame.display.flip()
-
-class State:
-
-    def __init__():
-
-    def loop():
+            if self.player.rect.colliderect(self.shelf.rect):
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    self.state.run_state('shelf', self.real_screen)
+        self.screen.blit(self.screen, (0, 0))
+        pygame.transform.scale(self.screen,
+                               (2 * const.WIDTH, 2 * const.HEIGHT),
+                               self.real_screen)
+        pygame.display.flip()
