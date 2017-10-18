@@ -10,10 +10,27 @@ class Character(pygame.sprite.Sprite):
         super(Character, self).__init__(*groups)
         self.sprite_dict = {}
         self.speed = 55
+        self.image_turn = 1
         self.block_direction = []
         self.direction = {0:'front',1:'front_right', 2:'right',3:'right_back',
                           4: 'back', 5:'back_left', 6:'left', 7:'left_front'}
+        self.move_action = {'front':{} ,'front_right':{} , 'right':{},'right_back':{},
+                          'back':{}, 'back_left':{}, 'left':{}, 'left_front':{}}
+        self.last_time = pygame.time.get_ticks()
+        self.front = {}
+        self.front_right = {}
+        self.right = {}
+        self.right_back = {}
+        self.back = {}
+        self.back_left = {}
+        self.left = {}
+        self.left_front = {}
         self.now_direction = 0
+        for id in range(1,5):
+            self.move_action['front_right'][id] = pygame.image.load(data.filepath("Game", "nightmarotony sprite -back right-0" + str(id) + ".png"))
+            self.move_action['left_front'][id] = pygame.image.load(data.filepath("Game",
+                                                             "nightmarotony sprite -back left-0" + str(
+                                                                 id) + ".png"))
         for animate in self.direction.values():
             self.sprite_dict[animate] = pygame.image.load(data.filepath("Game", animate + ".png"))
         self.image = self.sprite_dict['front']
@@ -26,6 +43,19 @@ class Character(pygame.sprite.Sprite):
         if key[pygame.K_UP] or key[pygame.K_w]:
             if self.now_direction not in self.block_direction:
                 self.move(game)
+                if self.now_direction == 1 or self.now_direction == 7:
+                    self.change_image()
+
+    def change_image(self):
+        self.image = self.move_action[self.direction[self.now_direction]][self.image_turn]
+        if pygame.time.get_ticks() > self.last_time + 100:
+            if (self.image_turn + 1) > 4:
+                self.image_turn = 1
+            else:
+                self.image_turn += 1
+            self.last_time = pygame.time.get_ticks()
+
+    def standing(self):
         self.image = self.sprite_dict[self.direction[self.now_direction]]
 
     def choose_direction(self):

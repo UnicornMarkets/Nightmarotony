@@ -143,6 +143,10 @@ class Game(object):
                     sys.exit()
             if event.type == pygame.KEYDOWN:
                 self.player.choose_direction()
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_w:
+                    self.player.standing()
+
             if self.player.rect.colliderect(self.shelf.rect):
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     self.state.run_state('shelf', self.real_screen)
