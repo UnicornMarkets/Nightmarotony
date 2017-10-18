@@ -45,6 +45,8 @@ class Intro(object):
         #self.select_sound.set_volume(const.SOUND_VOLUME)
         #self.theme_sound = pygame.mixer.Sound(data.filepath('theme.wav'))
         #self.theme_sound.set_volume(const.SOUND_VOLUME)
+        pygame.mixer.music.load(data.filepath('Audio', 'welcome.mp3'))
+        pygame.mixer.music.play()
 
     def loop(self):
 
@@ -65,7 +67,7 @@ class Intro(object):
 
             if image_num == 155:
                 button = self.screen.blit(startbar, (10, 300))
-            elif pygame.time.get_ticks() > last_time + 10:
+            elif pygame.time.get_ticks() > last_time + 20:
                 image_num += 1
                 num_str = '{0:03}'.format(image_num)
                 image = pygame.image.load(data.filepath("Cover Image Sequence", \
@@ -81,6 +83,7 @@ class Intro(object):
                 if image_num == 155 and button:
                     self.on_start(event, button)
 
+        pygame.mixer.music.stop()
         return self.start
 
     def on_start(self, event, button):
@@ -96,6 +99,7 @@ class Intro(object):
                 if button.collidepoint(position):
                     self.start = True
                         #self.select_sound.play()
+
 
 class Game(object):
 
