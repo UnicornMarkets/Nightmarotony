@@ -103,7 +103,7 @@ class Game(object):
     def __init__(self, window):
         self.window = window
         self.real_screen = window.screen
-        self.state = State()
+        self.state = State("shelf_info.png")
         self.screen = pygame.surface.Surface((2*const.WIDTH, 2*const.HEIGHT))
         self.clock = pygame.time.Clock()
         self.sprites = pygame.sprite.Group()
@@ -148,3 +148,38 @@ class Game(object):
                                (2 * const.WIDTH, 2 * const.HEIGHT),
                                self.real_screen)
         pygame.display.flip()
+
+
+class Level:
+    def __init__():
+        # set up params to determine which level to make
+        pass
+
+    def loop():
+        pass
+
+class State:
+
+    def __init__(self, image_name):
+      self.state_name = None
+      self.internal = pygame.image.load(
+          data.filepath("Game", "shelf_info.png"))
+
+    def run_state(self, state_name, real_screen):
+
+        if state_name == 'shelf':
+            self.run_shelf_state(real_screen)
+
+    def run_shelf_state(self, real_screen):
+        self.screen =  pygame.surface.Surface(
+            (2 * const.WIDTH, 2 * const.HEIGHT))
+        while True:
+            self.screen.fill(0)
+            self.screen.blit(self.shelf_info, [40, 100])
+            pygame.display.flip()
+            for event in pygame.event.get():
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    return True
+            pygame.transform.scale(self.screen,
+                                   (2 * const.WIDTH, 2 * const.HEIGHT),
+                                   real_screen)
