@@ -12,12 +12,14 @@ class TestGame:
     def plain(self, test):
         self.screen = pygame.display.set_mode((700, 700))
         while 1:
+            
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     return
                 if test:
                     pygame.time.set_timer(pygame.QUIT, 1000)
+        
 
             self.screen.fill((210, 100, 230))
             pygame.display.flip()
@@ -31,8 +33,9 @@ class TestGame:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     return
-            if test:
-                pygame.time.set_timer(pygame.QUIT, 1000)
+                if test:
+                    pygame.time.set_timer(pygame.QUIT, 3000)
+        
 
             self.screen.fill((0,0,0))
             cover.render(self.screen, (0, 0))
@@ -45,8 +48,8 @@ class TestGame:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     return
-            if test:
-                pygame.time.set_timer(pygame.QUIT, 1000)
+                if test:
+                    pygame.time.set_timer(pygame.QUIT, 1000)
 
             self.screen.fill((0,0,0))
             pygame.display.flip()
