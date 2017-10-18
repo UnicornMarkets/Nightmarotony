@@ -17,20 +17,14 @@ class Character(pygame.sprite.Sprite):
         self.move_action = {'front':{} ,'front_right':{} , 'right':{},'right_back':{},
                           'back':{}, 'back_left':{}, 'left':{}, 'left_front':{}}
         self.last_time = pygame.time.get_ticks()
-        self.front = {}
-        self.front_right = {}
-        self.right = {}
-        self.right_back = {}
-        self.back = {}
-        self.back_left = {}
-        self.left = {}
-        self.left_front = {}
         self.now_direction = 0
         for id in range(1,5):
-            self.move_action['front_right'][id] = pygame.image.load(data.filepath("Game", "nightmarotony sprite -back right-0" + str(id) + ".png"))
-            self.move_action['left_front'][id] = pygame.image.load(data.filepath("Game",
+            self.move_action['front_right'][id] = pygame.transform.scale(pygame.image.load(
+                            data.filepath("Game", "nightmarotony sprite -back right-0" + str(id) + ".png")
+                                                 ), (50, 100))
+            self.move_action['left_front'][id] = pygame.transform.scale(pygame.image.load(data.filepath("Game",
                                                              "nightmarotony sprite -back left-0" + str(
-                                                                 id) + ".png"))
+                                                                 id) + ".png")), (50, 100))
         for animate in self.direction.values():
             self.sprite_dict[animate] = pygame.image.load(data.filepath("Game", animate + ".png"))
         self.image = self.sprite_dict['front']
