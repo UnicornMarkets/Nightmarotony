@@ -109,6 +109,7 @@ class Game(object):
         self.state = State()
         self.screen = pygame.surface.Surface((2*const.WIDTH, 2*const.HEIGHT))
         self.clock = pygame.time.Clock()
+        self.dt = self.clock.tick(30) / 1000.0
         self.sprites = pygame.sprite.Group()
         self.player = Character(self.sprites)
         self.shelf = Shelf((self.sprites))
@@ -121,6 +122,7 @@ class Game(object):
             self.event_processor()
 
     def views(self):
+        self.sprites.update(self)
         self.screen.fill(0)
         for x in range(0, 2 * const.WIDTH // self.grass.get_width() + 1):
             for y in range(0, 2 * const.HEIGHT // self.grass.get_height() + 1):
@@ -139,9 +141,11 @@ class Game(object):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     sys.exit()
-
             if event.type == pygame.KEYDOWN:
-                self.player.update(self)
+                self.player.choose_direction()
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_w:
+                    self.player.standing()
 
             if self.player.rect.colliderect(self.shelf.rect):
                 if event.type == pygame.MOUSEBUTTONDOWN:
