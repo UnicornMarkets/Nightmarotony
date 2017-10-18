@@ -82,7 +82,7 @@ class Intro(object):
                 if image_num == 155 and button:
                     self.on_start(event, button)
 
-        pygame.mixer.music.fadeout(const.FADEOU_TTIME)
+        pygame.mixer.music.fadeout(const.FADEOUT_TIME)
         return self.start
 
     def on_start(self, event, button):
