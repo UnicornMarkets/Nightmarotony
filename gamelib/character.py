@@ -9,7 +9,7 @@ class Character(pygame.sprite.Sprite):
     def __init__(self, *groups):
         super(Character, self).__init__(*groups)
         self.sprite_dict = {}
-        self.speed = 55
+        self.speed = 55.0
         self.image_turn = 1
         self.block_direction = []
         self.direction = {0:'front',1:'front_right', 2:'right',3:'right_back',
@@ -84,8 +84,8 @@ class Character(pygame.sprite.Sprite):
                 self.rect.x += self.speed * game.dt
                 self.check_block(shelf_rect, 2)
             if self.now_direction == 3:
-                self.rect.y += self.speed * game.dt
-                self.rect.x += sqrt((self.speed ^ 2)/2) * game.dt
+                self.rect.y += sqrt((self.speed ** 2)/2) * game.dt
+                self.rect.x += sqrt((self.speed ** 2)/2) * game.dt
                 self.check_block(shelf_rect, 3)
             if self.now_direction == 4:
                 self.rect.y += self.speed * game.dt
