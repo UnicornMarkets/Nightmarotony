@@ -21,7 +21,7 @@ class State:
         if state_name == 'shelf':
             self.run_shelf_state(real_screen)
         if state_name == 'door':
-            self.run_door_state(real_screen)
+            return self.run_door_state(real_screen)
 
     def run_shelf_state(self, real_screen):
         self.screen =  pygame.surface.Surface(
@@ -70,8 +70,8 @@ class State:
                         if button[7].collidepoint(position) and correction[2]:
                             correction[3] = True
                             result = self.check_out(correction)
-                            if result == 'escape':
-                                return result
+            if result == 'escape':
+                return result
 
 
                 if event.type == pygame.KEYDOWN:
@@ -86,4 +86,3 @@ class State:
             return 'escape'
         else:
             return None
-

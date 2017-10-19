@@ -60,6 +60,7 @@ class Intro(object):
         startbar = pygame.image.load(data.filepath("Cover", "startbutton-27.png"))
         image_num = 0
         num_str = '{0:03}'.format(image_num)
+        button = None
         image = pygame.image.load(data.filepath("Cover Image Sequence", \
                                      self.start_string + num_str + ".jpg"))
 
@@ -182,6 +183,7 @@ class Game(object):
             if self.player.rect.colliderect(self.door.rect):
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     self.result = self.state.run_state('door', self.real_screen)
+                    print self.result
 
         self.screen.blit(self.screen, (0, 0))
         pygame.transform.scale(self.screen,
@@ -191,7 +193,7 @@ class Game(object):
 
     def finish_game(self):
         self.screen = pygame.display.set_mode((700, 700))
-        success = pygame.image.load(filepath("Cover", "passed.png"))
+        success = pygame.image.load(data.filepath("Cover", "passed.png"))
         while 1:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
