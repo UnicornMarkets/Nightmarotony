@@ -198,10 +198,13 @@ class Game(object):
             pygame.display.flip()
 
 class Level:
-    def __init__(self, window):
+    def __init__(self, window, player):
         self.window = window
+        self.player = player
         self.real_screen = window.screen
         self.screen = pygame.surface.Surface((2*const.WIDTH, 2*const.HEIGHT))
+        self.clock = pygame.time.Clock()
+        self.dt = self.clock.tick(30) / 1000.0
         # set up params to determine which level to make
 
     def tmxmap(self):
@@ -225,8 +228,29 @@ class Level:
 
     def loop(self):
         # loop to keep level running
+        for x, y, gid in self.map.get_layer_by_name("Tile Layer 1"):
+            tile = self.map.get_tile_image_by_gid(gid)
+            self.screen.blit(tile, (x * self.map.tilewidth,
+                                       y * self.map.tileheight))
+            pygame.transform.scale(self.screen,
+                                       (2 * const.WIDTH, 2 * const.HEIGHT),
+                                       self.real_screen)
+            pygame.display.flip()
         while 1:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    return
+            self.event_processor()
+            pygame.display.update()
+
+    def event_processor(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit(0)
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    sys.exit()
+            if event.type == pygame.KEYDOWN:
+                self.player.choose_direction()
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_w:
+                    self.player.standing()
