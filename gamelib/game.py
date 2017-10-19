@@ -136,8 +136,8 @@ class Game(object):
         while 1:
             self.views()
             if self.result == None:
-                self.event_processor()
-                #Level(self.window).loop()
+                #self.event_processor()
+                Level(self.window, self).loop()
             elif self.result == 'escape':
                 self.finish_game()
 
@@ -196,7 +196,8 @@ class Game(object):
             pygame.display.flip()
 
 class Level:
-    def __init__(self, window):
+    def __init__(self, window, game):
+        self.game = game
         self.window = window
         self.real_screen = window.screen
         self.screen = pygame.surface.Surface((2*const.WIDTH, 2*const.HEIGHT))
