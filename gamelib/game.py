@@ -127,29 +127,9 @@ class Game(object):
         self.grass = pygame.image.load(data.filepath("Game", "grass.png"))
         self.result = None
 
-
         pygame.mixer.music.load(data.filepath('Audio', 'theme.mp3'))
         pygame.mixer.music.set_volume(const.SOUND_VOLUME)
         pygame.mixer.music.play(-1)
-
-    def tmxmap(self):
-        data_py = os.path.abspath(os.path.dirname(__file__))
-        Tilemap_dir = os.path.normpath(os.path.join(data_py, '..', 'Tilemap'))
-        os.path.join(data_dir, directory, filename)
-        self.map = load_pygame("Tilemap", "tmx", "Dungeon.tmx")
-        print(self.map)
-
-    def inspect_map(self):
-        print(self.map)
-        #props = self.get_tile_properties(x, y, layer)
-        print(self.map.properties, 'property')
-        print(self.map.layers, 'layer')
-        for layer in self.map.visible_layers:
-            print(layer)
-        layer1 = self.map.get_layer_by_name("Tile Layer 1")
-        print(layer1)
-        object = self.map.objects
-        print(self.map.objectgroups, 'object group')
 
     def loop(self):
         while 1:
@@ -217,10 +197,32 @@ class Game(object):
             pygame.display.flip()
 
 class Level:
-    def __init__():
+    def __init__(self, window):
+        self.window = window
+        self.real_screen = window.screen
+        self.screen = pygame.surface.Surface((2*const.WIDTH, 2*const.HEIGHT))
         # set up params to determine which level to make
         pass
 
-    def loop():
+    def tmxmap(self):
+        data_py = os.path.abspath(os.path.dirname(__file__))
+        Tilemap_dir = os.path.normpath(os.path.join(data_py, '..', 'Tilemap'))
+        os.path.join(data_dir, directory, filename)
+        self.map = load_pygame("Tilemap", "tmx", "Dungeon.tmx")
+        print(self.map)
+
+    def inspect_map(self):
+        print(self.map)
+        #props = self.get_tile_properties(x, y, layer)
+        print(self.map.properties, 'property')
+        print(self.map.layers, 'layer')
+        for layer in self.map.visible_layers:
+            print(layer)
+        layer1 = self.map.get_layer_by_name("Tile Layer 1")
+        print(layer1)
+        object = self.map.objects
+        print(self.map.objectgroups, 'object group')
+
+    def loop(self):
         # loop to keep level running
         pass
