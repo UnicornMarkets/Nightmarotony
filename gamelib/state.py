@@ -108,7 +108,6 @@ class State:
                         if button[0].collidepoint(position):
                             if self.check_correct(word, color) == False:
                                 correction += 1
-                            print(self.check_correct(word, color), correction)
                         word, color, sur = self.change_word()
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
@@ -116,7 +115,6 @@ class State:
                         if button[1].collidepoint(position):
                             if self.check_correct(word, color) == True:
                                 correction += 1
-                            print(self.check_correct(word, color), correction)
                         word, color, sur = self.change_word()
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_q:
                     return None
