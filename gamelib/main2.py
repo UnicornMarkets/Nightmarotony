@@ -6,7 +6,7 @@ from pytmx.util_pygame import load_pygame
 class Player(pygame.sprite.Sprite):
     def __init__(self, *groups):
         super(Player, self).__init__(*groups)
-        self.image = pygame.transform.scale(pygame.image.load('resources/images/lichking.png'),
+        self.image = pygame.transform.scale(pygame.image.load('data/Game/lichking.png'),
                                        (100, 100))
         self.rect = pygame.rect.Rect((320, 240), self.image.get_size())
 
@@ -63,22 +63,26 @@ class Game:
 
         clock = pygame.time.Clock()
 
-        background = pygame.transform.scale(pygame.image.load('resources/images/map.png'),
+        background = pygame.transform.scale(pygame.image.load(
+            'data/Game/map.png'),
                                             (1024, 1024))
 
         sprites = pygame.sprite.Group()
         self.player = Player(sprites)
 
         self.walls = pygame.sprite.Group()
-        block = pygame.transform.scale(pygame.image.load('resources/images/block.png'), (32,
-                                                                        32))
+        block = pygame.transform.scale(pygame.image.load(
+            'data/Game/block.png'), (32, 32))
         for x in range(0, 1024, 32):
             for y in range(0, 1024, 32):
-                if x in (0, 1024-32) or y in (0, 1024-32):
+                #if x in (0, 1024-32) or y in (0, 1024-32):
+                if x == 32 and y == 32:
+
                     wall = pygame.sprite.Sprite(self.walls)
                     wall.image = block
                     wall.rect = pygame.rect.Rect((x,y), block.get_size())
         sprites.add(self.walls)
+
 
 
         #self.tilemap = load_pygame("Dungeon.tmx")

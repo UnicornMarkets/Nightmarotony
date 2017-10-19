@@ -15,9 +15,13 @@ except:
     from gamelib.shelf import Shelf
     from gamelib.state import State
     from gamelib.door import Door
-
 import pytmx
 from pytmx.util_pygame import load_pygame
+import numpy
+from numpy.random import random_integers as rand
+import matplotlib.pyplot as pyplot
+
+
 
 class GameWindow(object):
 
@@ -132,23 +136,6 @@ class Game(object):
         pygame.mixer.music.play(-1)
 
     def loop(self):
-        print(self.map)
-        #props = self.get_tile_properties(x, y, layer)
-        print(self.map.properties, 'property')
-        print(self.map.layers, 'layer')
-        print(self.map.images, 'images gid')
-        for layer in self.map.visible_layers:
-            print(layer)
-        layer1 = self.map.get_layer_by_name("Tile Layer 1")
-        print(layer1)
-        object1 = self.map.get_object_by_name('book')
-        print object1.name
-        print object1.type
-        print object1.gid
-        print object1.width
-        print object1.image
-        print object1.properties
-
         while 1:
             self.views()
             if self.result == None:
@@ -230,6 +217,55 @@ class Level:
         tiledmap = os.path.join(tiledmap_dir, "tmx", "Dungeon.tmx")
         self.map = load_pygame(tiledmap)
         print(self.map)
+
+    def scroll(self):
+        map_data = pyscroll.TiledMapData(self.map)
+
+        screen_size = (400, 400)
+        map_layer = pyscroll.BufferedRenderer(map_data, screen_size)
+        group = pyscroll.PyscrollGroup(map_layer=map_layer)
+        group.add(sprite)
+        group.center(sprite.rect.center)
+
+        group.draw(screen)
+
+        map_layer.zoom = 0.5
+
+        map_layer.zoom = 2.0
+
+    def maze(width=20, height=20, complexity=.75, density=.75):
+        columns = width
+        rows = height
+        # Only odd shapes
+        shape = ((height // 2) * 2 + 1, (width // 2) * 2 + 1)
+        # Adjust complexity and density relative to maze size
+        complexity = int(complexity * (5 * (shape[0] + shape[1])))
+        density = int(density * ((shape[0] // 2) * (shape[1] // 2)))
+        # Build actual maze
+        Z = numpy.zeros(shape, dtype=bool)
+        # Fill borders
+        Z[0, :] = Z[-1, :] = 1
+        Z[:, 0] = Z[:, -1] = 1
+        # Make aisles
+        for i in range(density):
+            x, y = rand(0, shape[1] // 2) * 2, rand(0, shape[0] // 2) * 2
+            Z[y, x] = 1
+            for j in range(complexity):
+                neighbours = []
+                if x > 1:             neighbours.append((y, x - 2))
+                if x < shape[1] - 2:  neighbours.append((y, x + 2))
+                if y > 1:             neighbours.append((y - 2, x))
+                if y < shape[0] - 2:  neighbours.append((y + 2, x))
+                if len(neighbours):
+                    y_, x_ = neighbours[rand(0, len(neighbours) - 1)]
+                    if Z[y_, x_] == 0:
+                        Z[y_, x_] = 1
+                        Z[y_ + (y - y_) // 2, x_ + (x - x_) // 2] = 1
+                        x, y = x_, y_
+        return Z
+
+
+
 
     def inspect_map(self):
         print(self.map)
