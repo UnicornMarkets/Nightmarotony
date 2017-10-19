@@ -19,7 +19,7 @@ class Character(pygame.sprite.Sprite):
                           'back':{}, 'front left':{}, 'left':{}, 'back left':{}}
         self.last_time = pygame.time.get_ticks()
         self.now_direction = 0
-        for direct in ['front', 'back', 'back right', 'back left', 'front right', 'front left']:
+        for direct in self.direction.values():
             for num in range(1,5):
                 file_name = pic_name_lead + direct + "-0" + str(num) + ".png"
                 image = pygame.image.load(data.filepath("Game", file_name))
@@ -27,8 +27,6 @@ class Character(pygame.sprite.Sprite):
                 self.move_action[direct][num] = scaled_image
             self.sprite_dict[direct] = scaled_image
 
-        for direct in ['right', 'left']:
-            self.sprite_dict[direct] = pygame.image.load(data.filepath("Game", direct + ".png"))
         self.image = self.sprite_dict['front']
         image_size = self.image.get_size()
         self.rect = pygame.rect.Rect((320, 370), (image_size[0], image_size[1]))
@@ -46,8 +44,7 @@ class Character(pygame.sprite.Sprite):
         if key[pygame.K_DOWN] or key[pygame.K_s]:
             self.change_direction(4)
         self.image = self.sprite_dict[self.direction[self.now_direction]]
-        if self.now_direction in [1, 7, 3, 5, 0, 4]:
-            self.change_image()
+        self.change_image()
 
     def change_image(self):
         self.image = self.move_action[self.direction[self.now_direction]][self.image_turn]
