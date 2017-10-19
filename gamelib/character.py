@@ -9,24 +9,26 @@ class Character(pygame.sprite.Sprite):
     def __init__(self, *groups):
         super(Character, self).__init__(*groups)
         self.sprite_dict = {}
-        self.speed = 55.0
+        self.speed = 150.0
         self.image_turn = 1
         self.block_direction = []
-        self.direction = {0:'front',1:'front_right', 2:'right',3:'right_back',
-                          4: 'back', 5:'back_left', 6:'left', 7:'left_front'}
-        self.move_action = {'front':{} ,'front_right':{} , 'right':{},'right_back':{},
-                          'back':{}, 'back_left':{}, 'left':{}, 'left_front':{}}
+        pic_name_lead = "nightmarotony sprite-"
+        self.direction = {0:'front',1:'back right', 2:'right',3:'front right',
+                          4: 'back', 5:'front left', 6:'left', 7:'back left'}
+        self.move_action = {'front':{} , 'back right':{} , 'right':{},'front right':{},
+                          'back':{}, 'front left':{}, 'left':{}, 'back left':{}}
         self.last_time = pygame.time.get_ticks()
         self.now_direction = 0
-        for id in range(1,5):
-            self.move_action['front_right'][id] = pygame.transform.scale(pygame.image.load(
-                            data.filepath("Game", "nightmarotony sprite -back right-0" + str(id) + ".png")
-                                                 ), (50, 100))
-            self.move_action['left_front'][id] = pygame.transform.scale(pygame.image.load(data.filepath("Game",
-                                                             "nightmarotony sprite -back left-0" + str(
-                                                                 id) + ".png")), (50, 100))
-        for animate in self.direction.values():
-            self.sprite_dict[animate] = pygame.image.load(data.filepath("Game", animate + ".png"))
+        for direct in ['back right', 'back left', 'front right', 'front left']:
+            for num in range(1,5):
+                file_name = pic_name_lead + direct + "-0" + str(num) + ".png"
+                image = pygame.image.load(data.filepath("Game", file_name))
+                scaled_image = pygame.transform.scale(image, (80, 150))
+                self.move_action[direct][num] = scaled_image
+            self.sprite_dict[direct] = scaled_image
+
+        for direct in ['front', 'right', 'back', 'left']:
+            self.sprite_dict[direct] = pygame.image.load(data.filepath("Game", direct + ".png"))
         self.image = self.sprite_dict['front']
         image_size = self.image.get_size()
         self.rect = pygame.rect.Rect((320, 370), (image_size[0], image_size[1]))
@@ -37,7 +39,7 @@ class Character(pygame.sprite.Sprite):
         if key[pygame.K_UP] or key[pygame.K_w]:
             if self.now_direction not in self.block_direction:
                 self.move(game)
-                if self.now_direction == 1 or self.now_direction == 7:
+                if self.now_direction in [1, 7, 3, 5]:
                     self.change_image()
 
     def change_image(self):
