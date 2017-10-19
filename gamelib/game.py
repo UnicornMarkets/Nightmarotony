@@ -125,7 +125,6 @@ class Game(object):
         self.shelf = Shelf((self.sprites))
         self.door = Door((self.sprites))
         self.grass = pygame.image.load(data.filepath("Game", "grass.png"))
-        self.map = load_pygame("Tilemap/tmx/Dungeon.tmx")
         self.result = None
 
 
@@ -134,9 +133,13 @@ class Game(object):
         pygame.mixer.music.play(-1)
 
     def tmxmap(self):
+        data_py = os.path.abspath(os.path.dirname(__file__))
+        Tilemap_dir = os.path.normpath(os.path.join(data_py, '..', 'Tilemap'))
+        os.path.join(data_dir, directory, filename)
+        self.map = load_pygame("Tilemap", "tmx", "Dungeon.tmx")
         print(self.map)
 
-    def loop(self):
+    def inspect_map(self):
         print(self.map)
         #props = self.get_tile_properties(x, y, layer)
         print(self.map.properties, 'property')
@@ -148,7 +151,7 @@ class Game(object):
         object = self.map.objects
         print(self.map.objectgroups, 'object group')
 
-
+    def loop(self):
         while 1:
             self.views()
             if self.result == None:

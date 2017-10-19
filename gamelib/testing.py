@@ -61,6 +61,8 @@ class TestGame:
 
 
 if __name__ == "__main__":
+
+    
     try:
         game = TestGame()
         game.plain(True)
