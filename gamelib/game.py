@@ -223,9 +223,14 @@ class Game(object):
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    pygame.mixer.music.stop()
+                    pygame.mixer.music.fadeout(const.FADEOUT_TIME)
                     sys.exit()
-            self.player.update(self)
+            if event.type == pygame.KEYDOWN:
+                self.player.choose_direction()
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_w:
+                    self.player.standing()
+
 
             if self.player.rect.colliderect(self.shelf.rect):
                 if event.type == pygame.MOUSEBUTTONDOWN:
@@ -234,7 +239,6 @@ class Game(object):
 
             if self.player.rect.colliderect(self.door.rect):
                 if event.type == pygame.MOUSEBUTTONDOWN:
-
                     state = State(state_name='door')
                     self.result = state.run_state(self.real_screen)
 
