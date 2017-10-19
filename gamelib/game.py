@@ -117,7 +117,6 @@ class Game(object):
     def __init__(self, window):
         self.window = window
         self.real_screen = window.screen
-        self.state = State()
         self.screen = pygame.surface.Surface((2*const.WIDTH, 2*const.HEIGHT))
         self.clock = pygame.time.Clock()
         self.dt = self.clock.tick(30) / 1000.0
@@ -171,12 +170,13 @@ class Game(object):
 
             if self.player.rect.colliderect(self.shelf.rect):
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    self.state.run_state('shelf', self.real_screen)
+                    state = State(state_name='shelf')
+                    state.run_state(self.real_screen)
 
             if self.player.rect.colliderect(self.door.rect):
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    self.result = self.state.run_state('door', self.real_screen)
-                    print self.result
+                    state = State(state_name='door')
+                    self.result = state.run_state(self.real_screen)
 
         self.screen.blit(self.screen, (0, 0))
         pygame.transform.scale(self.screen,
