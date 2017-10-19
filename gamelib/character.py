@@ -37,6 +37,7 @@ class Character(pygame.sprite.Sprite):
         if key[pygame.K_UP] or key[pygame.K_w]:
             if self.now_direction not in self.block_direction:
                 self.move(game)
+                self.change_image()
         if key[pygame.K_LEFT] or key[pygame.K_a]:
             self.change_direction(-1)
         if key[pygame.K_RIGHT] or key[pygame.K_d]:
@@ -44,7 +45,6 @@ class Character(pygame.sprite.Sprite):
         if key[pygame.K_DOWN] or key[pygame.K_s]:
             self.change_direction(4)
         self.image = self.sprite_dict[self.direction[self.now_direction]]
-        self.change_image()
 
     def change_image(self):
         self.image = self.move_action[self.direction[self.now_direction]][self.image_turn]
