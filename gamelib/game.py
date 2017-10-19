@@ -136,8 +136,8 @@ class Game(object):
         while 1:
             self.views()
             if self.result == None:
-                #self.event_processor()
-                Level(self.window, self).loop()
+                self.event_processor()
+                #Level(self.window, self).loop()
             elif self.result == 'escape':
                 self.finish_game()
 
