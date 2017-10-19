@@ -1,6 +1,7 @@
 import pygame
 import sys
 import datetime as dt
+import os
 
 try:
     import const
@@ -176,8 +177,6 @@ class Game(object):
     def __init__(self, window):
         self.window = window
         self.real_screen = window.screen
-        self.state = State()
-        self.screen = pygame.surface.Surface((2 * const.WIDTH, 2 * const.HEIGHT))
         self.clock = pygame.time.Clock()
         self.dt = self.clock.tick(30) / 1000.0
         self.sprites = pygame.sprite.Group()
@@ -185,27 +184,13 @@ class Game(object):
         self.shelf = Shelf(self.sprites)
         self.door = Door(self.sprites)
         self.grass = pygame.image.load(data.filepath("Game", "grass.png"))
-        self.map = load_pygame("Tilemap/tmx/Dungeon.tmx")
         self.result = None
 
         pygame.mixer.music.load(data.filepath('Audio', 'theme.mp3'))
         pygame.mixer.music.set_volume(const.SOUND_VOLUME)
         pygame.mixer.music.play(-1)
 
-    def tmxmap(self):
-        print(self.map)
-
     def loop(self):
-        print(self.map)
-        # props = self.get_tile_properties(x, y, layer)
-        print(self.map.properties, 'property')
-        print(self.map.layers, 'layer')
-        for layer in self.map.visible_layers:
-            print(layer)
-        layer1 = self.map.get_layer_by_name("Tile Layer 1")
-        print(layer1)
-        object = self.map.objects
-        print(self.map.objectgroups, 'object group')
 
         while 1:
             self.views()
@@ -245,12 +230,15 @@ class Game(object):
 
             if self.player.rect.colliderect(self.shelf.rect):
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    self.state.run_state('shelf', self.real_screen)
+                    state = State(state_name='shelf')
+                    state.run_state(self.real_screen)
 
             if self.player.rect.colliderect(self.door.rect):
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    self.result = self.state.run_state('door', self.real_screen)
-                    # print self.result
+
+                    state = State(state_name='door')
+                    self.result = state.run_state(self.real_screen)
+
 
         self.screen.blit(self.screen, (0, 0))
         pygame.transform.scale(self.screen,
@@ -273,10 +261,59 @@ class Game(object):
 
 
 class Level:
-    def __init__():
+    def __init__(self, window, player):
+        self.window = window
+        self.player = player
+        self.real_screen = window.screen
+        self.screen = pygame.surface.Surface((2*const.WIDTH, 2*const.HEIGHT))
+        self.clock = pygame.time.Clock()
+        self.dt = self.clock.tick(30) / 1000.0
         # set up params to determine which level to make
-        pass
 
-    def loop():
+    def tmxmap(self):
+        temp = os.path.abspath(os.path.dirname(__file__))
+        tiledmap_dir = os.path.normpath(os.path.join(temp, '..', 'Tilemap'))
+        tiledmap = os.path.join(tiledmap_dir, "tmx", "Dungeon.tmx")
+        self.map = load_pygame(tiledmap)
+        print(self.map)
+
+    def inspect_map(self):
+        print(self.map)
+        #props = self.get_tile_properties(x, y, layer)
+        print(self.map.properties, 'property')
+        print(self.map.layers, 'layer')
+        for layer in self.map.visible_layers:
+            print(layer)
+        layer1 = self.map.get_layer_by_name("Tile Layer 1")
+        print(layer1)
+        object = self.map.objects
+        print(self.map.objectgroups, 'object group')
+
+    def loop(self):
         # loop to keep level running
-        pass
+        for x, y, gid in self.map.get_layer_by_name("Tile Layer 1"):
+            tile = self.map.get_tile_image_by_gid(gid)
+            self.screen.blit(tile, (x * self.map.tilewidth,
+                                       y * self.map.tileheight))
+            pygame.transform.scale(self.screen,
+                                       (2 * const.WIDTH, 2 * const.HEIGHT),
+                                       self.real_screen)
+            pygame.display.flip()
+        while 1:
+            self.event_processor()
+            pygame.display.update()
+
+    def event_processor(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit(0)
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    sys.exit()
+            if event.type == pygame.KEYDOWN:
+                self.player.choose_direction()
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_w:
+                    self.player.standing()

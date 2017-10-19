@@ -9,6 +9,7 @@ Members: Tony Sun, Dezhi Wang, Nathan Zhang, Stephanie Zhao, Mike Tamillow
 DEPENDENCIES:
 
 pygame
+pyscroll
 PIL
 
 You might need to install some of these before running the game:
