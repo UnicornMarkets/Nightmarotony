@@ -141,12 +141,18 @@ class Game(object):
         #props = self.get_tile_properties(x, y, layer)
         print(self.map.properties, 'property')
         print(self.map.layers, 'layer')
+        print(self.map.images, 'images gid')
         for layer in self.map.visible_layers:
             print(layer)
         layer1 = self.map.get_layer_by_name("Tile Layer 1")
         print(layer1)
-        object = self.map.objects
-        print(self.map.objectgroups, 'object group')
+        object1 = self.map.get_object_by_name('book')
+        print object1.name
+        print object1.type
+        print object1.gid
+        print object1.width
+        print object1.image
+        print object1.properties
 
 
         while 1:
