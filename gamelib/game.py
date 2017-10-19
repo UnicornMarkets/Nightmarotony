@@ -1,5 +1,6 @@
 import pygame
 import sys
+import os
 try:
     import const
     import data
@@ -202,13 +203,12 @@ class Level:
         self.real_screen = window.screen
         self.screen = pygame.surface.Surface((2*const.WIDTH, 2*const.HEIGHT))
         # set up params to determine which level to make
-        pass
 
     def tmxmap(self):
-        data_py = os.path.abspath(os.path.dirname(__file__))
-        Tilemap_dir = os.path.normpath(os.path.join(data_py, '..', 'Tilemap'))
-        os.path.join(data_dir, directory, filename)
-        self.map = load_pygame("Tilemap", "tmx", "Dungeon.tmx")
+        temp = os.path.abspath(os.path.dirname(__file__))
+        tiledmap_dir = os.path.normpath(os.path.join(temp, '..', 'Tilemap'))
+        tiledmap = os.path.join(tiledmap_dir, "tmx", "Dungeon.tmx")
+        self.map = load_pygame(tiledmap)
         print(self.map)
 
     def inspect_map(self):
@@ -225,4 +225,8 @@ class Level:
 
     def loop(self):
         # loop to keep level running
-        pass
+        while 1:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    return

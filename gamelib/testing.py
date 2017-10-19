@@ -59,6 +59,12 @@ class TestGame:
             self.screen.blit(success, (200,250))
             pygame.display.flip()
 
+class TestGameWindow:
+
+    def __init__(self):
+        pygame.init()
+        self.screen = pygame.display.set_mode((700, 700))
+
 
 if __name__ == "__main__":
 
