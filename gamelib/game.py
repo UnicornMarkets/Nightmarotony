@@ -49,7 +49,8 @@ class Intro(object):
         self.clock = pygame.time.Clock()
         self.clock.tick(60)
         pygame.mixer.music.load(data.filepath('Audio', 'welcome.mp3'))
-        pygame.mixer.music.play()
+        pygame.mixer.music.set_volume(const.SOUND_VOLUME)
+        pygame.mixer.music.play(-1)
 
     def loop(self):
 
@@ -88,7 +89,8 @@ class Intro(object):
                 if image_num == 155 and button:
                     self.on_start(event, button)
 
-        pygame.mixer.music.stop()
+        pygame.mixer.music.fadeout(const.FADEOUT_TIME)
+
         return self.start
 
     def on_start(self, event, button):
@@ -97,14 +99,17 @@ class Intro(object):
                 sys.exit()
             elif event.key == pygame.K_SPACE:
                 self.start = True
-                #self.select_sound.play()
+                startsound = pygame.mixer.Sound(data.filepath('Audio', 'start.wav'))
+                startsound.set_volume(const.SOUND_VOLUME)
+                startsound.play()
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
                 position = pygame.mouse.get_pos()
                 if button.collidepoint(position):
                     self.start = True
-                        #self.select_sound.play()
-
+                    startsound = pygame.mixer.Sound(data.filepath('Audio', 'start.wav'))
+                    startsound.set_volume(const.SOUND_VOLUME)
+                    startsound.play()
 
 class Game(object):
 
@@ -122,6 +127,11 @@ class Game(object):
         self.grass = pygame.image.load(data.filepath("Game", "grass.png"))
         self.map = load_pygame("Tilemap/tmx/Dungeon.tmx")
         self.result = None
+
+
+        pygame.mixer.music.load(data.filepath('Audio', 'theme.mp3'))
+        pygame.mixer.music.set_volume(const.SOUND_VOLUME)
+        pygame.mixer.music.play(-1)
 
     def tmxmap(self):
         print(self.map)
@@ -161,11 +171,13 @@ class Game(object):
     def event_processor(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                pygame.mixer.music.fadeout(const.FADEOUT_TIME)
                 pygame.quit()
                 exit(0)
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
+                    pygame.mixer.music.fadeout(const.FADEOUT_TIME)
                     sys.exit()
             if event.type == pygame.KEYDOWN:
                 self.player.choose_direction()
