@@ -11,6 +11,7 @@ try:
     from state import State
 except:
     from gamelib import const, data, gifimage
+    from gamelib.map import Map
     from gamelib.character import Character
     from gamelib.shelf import Shelf
     from gamelib.state import State
@@ -122,6 +123,8 @@ class Game(object):
         self.dt = self.clock.tick(30) / 1000.0
         self.sprites = pygame.sprite.Group()
         self.player = Character(self.sprites)
+        self.map = Map(data.filepath('Tilemap', 'Dungeon.tmx'))
+        self.map_image = self.map.make_2x_map()
         self.shelf = Shelf((self.sprites))
         self.door = Door((self.sprites))
         self.grass = pygame.image.load(data.filepath("Game", "grass.png"))
@@ -142,9 +145,10 @@ class Game(object):
     def views(self):
         self.sprites.update(self)
         self.screen.fill(0)
-        for x in range(0, 2 * const.WIDTH // self.grass.get_width() + 1):
+        '''for x in range(0, 2 * const.WIDTH // self.grass.get_width() + 1):
             for y in range(0, 2 * const.HEIGHT // self.grass.get_height() + 1):
-                self.screen.blit(self.grass, (x * 100, y * 100))
+                self.screen.blit(self.grass, (x * 100, y * 100))'''
+        self.screen.blit(self.map_image, (0,0))
 
         self.screen.blit(self.player.image, self.player.rect)
         self.screen.blit(self.shelf.image, self.shelf.rect)
