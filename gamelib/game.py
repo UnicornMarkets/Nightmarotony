@@ -16,6 +16,7 @@ except:
     from gamelib.state import State
     from gamelib.door import Door
 
+import tmx
 import pytmx
 from pytmx.util_pygame import load_pygame
 
@@ -136,6 +137,7 @@ class Game(object):
             self.views()
             if self.result == None:
                 self.event_processor()
+                #Level(self.window, self).loop()
             elif self.result == 'escape':
                 self.finish_game()
 
@@ -162,11 +164,7 @@ class Game(object):
                 if event.key == pygame.K_ESCAPE:
                     pygame.mixer.music.fadeout(const.FADEOUT_TIME)
                     sys.exit()
-            if event.type == pygame.KEYDOWN:
-                self.player.choose_direction()
-            if event.type == pygame.KEYUP:
-                if event.key == pygame.K_w:
-                    self.player.standing()
+            self.player.update(self)
 
             if self.player.rect.colliderect(self.shelf.rect):
                 if event.type == pygame.MOUSEBUTTONDOWN:
@@ -198,59 +196,35 @@ class Game(object):
             pygame.display.flip()
 
 class Level:
-    def __init__(self, window, player):
+    def __init__(self, window, game):
+        self.game = game
         self.window = window
-        self.player = player
         self.real_screen = window.screen
         self.screen = pygame.surface.Surface((2*const.WIDTH, 2*const.HEIGHT))
         self.clock = pygame.time.Clock()
         self.dt = self.clock.tick(30) / 1000.0
+        self.sprites = tmx.SpriteLayer()
+        #start_cell = self.tilemap.layers['triggers'].find('player')[0]
+        self.player = Character(self.sprites)
         # set up params to determine which level to make
 
     def tmxmap(self):
         temp = os.path.abspath(os.path.dirname(__file__))
         tiledmap_dir = os.path.normpath(os.path.join(temp, '..', 'Tilemap'))
         tiledmap = os.path.join(tiledmap_dir, "tmx", "Dungeon.tmx")
-        self.map = load_pygame(tiledmap)
-        print(self.map)
-
-    def inspect_map(self):
-        print(self.map)
-        #props = self.get_tile_properties(x, y, layer)
-        print(self.map.properties, 'property')
-        print(self.map.layers, 'layer')
-        for layer in self.map.visible_layers:
-            print(layer)
-        layer1 = self.map.get_layer_by_name("Tile Layer 1")
-        print(layer1)
-        object = self.map.objects
-        print(self.map.objectgroups, 'object group')
+        self.map = tmx.load(tiledmap, self.screen.get_size())
+        self.map.layers.append(self.sprites)
 
     def loop(self):
         # loop to keep level running
-        for x, y, gid in self.map.get_layer_by_name("Tile Layer 1"):
-            tile = self.map.get_tile_image_by_gid(gid)
-            self.screen.blit(tile, (x * self.map.tilewidth,
-                                       y * self.map.tileheight))
-            pygame.transform.scale(self.screen,
-                                       (2 * const.WIDTH, 2 * const.HEIGHT),
-                                       self.real_screen)
-            pygame.display.flip()
+        self.tmxmap()
         while 1:
-            self.event_processor()
-            pygame.display.update()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    return
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                    return
 
-    def event_processor(self):
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                exit(0)
-
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    sys.exit()
-            if event.type == pygame.KEYDOWN:
-                self.player.choose_direction()
-            if event.type == pygame.KEYUP:
-                if event.key == pygame.K_w:
-                    self.player.standing()
+            self.map.update(self.dt, self)
+            self.map.draw(screen)
+            pygame.display.flip()
