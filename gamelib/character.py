@@ -13,13 +13,13 @@ class Character(pygame.sprite.Sprite):
         self.image_turn = 1
         self.block_direction = []
         pic_name_lead = "nightmarotony sprite-"
-        self.direction = {0:'front',1:'back right', 2:'right',3:'front right',
-                          4: 'back', 5:'front left', 6:'left', 7:'back left'}
+        self.direction = {0:'back', 1:'back right', 2:'right', 3:'front right',
+                          4: 'front', 5:'front left', 6:'left', 7:'back left'}
         self.move_action = {'front':{} , 'back right':{} , 'right':{},'front right':{},
                           'back':{}, 'front left':{}, 'left':{}, 'back left':{}}
         self.last_time = pygame.time.get_ticks()
         self.now_direction = 0
-        for direct in ['back right', 'back left', 'front right', 'front left']:
+        for direct in ['front', 'back', 'back right', 'back left', 'front right', 'front left']:
             for num in range(1,5):
                 file_name = pic_name_lead + direct + "-0" + str(num) + ".png"
                 image = pygame.image.load(data.filepath("Game", file_name))
@@ -27,7 +27,7 @@ class Character(pygame.sprite.Sprite):
                 self.move_action[direct][num] = scaled_image
             self.sprite_dict[direct] = scaled_image
 
-        for direct in ['front', 'right', 'back', 'left']:
+        for direct in ['right', 'left']:
             self.sprite_dict[direct] = pygame.image.load(data.filepath("Game", direct + ".png"))
         self.image = self.sprite_dict['front']
         image_size = self.image.get_size()
@@ -39,8 +39,15 @@ class Character(pygame.sprite.Sprite):
         if key[pygame.K_UP] or key[pygame.K_w]:
             if self.now_direction not in self.block_direction:
                 self.move(game)
-                if self.now_direction in [1, 7, 3, 5]:
+                if self.now_direction in [1, 7, 3, 5, 0, 4]:
                     self.change_image()
+        if key[pygame.K_LEFT] or key[pygame.K_a]:
+            self.change_direction(-1)
+        if key[pygame.K_RIGHT] or key[pygame.K_d]:
+            self.change_direction(1)
+        if key[pygame.K_DOWN] or key[pygame.K_s]:
+            self.change_direction(4)
+        self.image = self.sprite_dict[self.direction[self.now_direction]]
 
     def change_image(self):
         self.image = self.move_action[self.direction[self.now_direction]][self.image_turn]
@@ -50,19 +57,6 @@ class Character(pygame.sprite.Sprite):
             else:
                 self.image_turn += 1
             self.last_time = pygame.time.get_ticks()
-
-    def standing(self):
-        self.image = self.sprite_dict[self.direction[self.now_direction]]
-
-    def choose_direction(self):
-        key = pygame.key.get_pressed()
-        if key[pygame.K_LEFT] or key[pygame.K_a]:
-            self.change_direction(-1)
-        if key[pygame.K_RIGHT] or key[pygame.K_d]:
-            self.change_direction(1)
-        if key[pygame.K_DOWN] or key[pygame.K_s]:
-            self.change_direction(4)
-        self.image = self.sprite_dict[self.direction[self.now_direction]]
 
     def change_direction(self, change):
         self.now_direction += change
