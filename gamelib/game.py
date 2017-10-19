@@ -177,6 +177,7 @@ class Game(object):
     def __init__(self, window):
         self.window = window
         self.real_screen = window.screen
+        self.screen = pygame.surface.Surface((2 * const.WIDTH, 2 * const.HEIGHT))
         self.clock = pygame.time.Clock()
         self.dt = self.clock.tick(30) / 1000.0
         self.sprites = pygame.sprite.Group()
