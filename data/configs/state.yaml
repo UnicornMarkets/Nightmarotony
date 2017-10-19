@@ -1,0 +1,115 @@
+database_check:
+    write_in_check:
+    export_check:
+session: !!int 300
+level0:
+    producer:
+        Tony_pro:
+            producer_features:
+                AAPL:
+                    cost_basis: !!int 49
+                    prod_expected_return: !!float 0.0204
+                    asset_production_rate: !!float 0.1
+                    asset_sales_rate: !!float 0.1
+                YHOO:
+                    cost_basis: !!int 50
+                    prod_expected_return: !!float 0
+                    asset_production_rate: !!float 0
+                    asset_sales_rate: !!float 0.1
+            asset:
+                AAPL: !!int 0
+                YHOO: !!int 0
+            cash: !!float 10000
+        Mike_pro:
+            producer_features:
+                AAPL:
+                    cost_basis: !!int 49
+                    prod_expected_return: !!float 0.0204
+                    asset_production_rate: !!float 0.1
+                    asset_sales_rate: !!float 0.1
+                YHOO:
+                    cost_basis: !!int 50
+                    prod_expected_return: !!float 0
+                    asset_production_rate: !!float 0
+                    asset_sales_rate: !!float 0.1
+            asset:
+                AAPL: !!int 0
+                YHOO: !!int 0
+            cash: !!float 10000
+        Edward_pro:
+            producer_features:
+                AAPL:
+                    cost_basis: !!int 49
+                    prod_expected_return: !!float 0.0204
+                    asset_production_rate: !!float 0.1
+                    asset_sales_rate: !!float 0.1
+                YHOO:
+                    cost_basis: !!int 50
+                    prod_expected_return: !!float 0
+                    asset_production_rate: !!float 0
+                    asset_sales_rate: !!float 0.1
+            asset:
+                AAPL: !!int 0
+                YHOO: !!int 0
+            cash: !!float 10000
+    consumer:
+        Tony_con:
+            consumer_features:
+                AAPL:
+                    utility: !!int 102
+                    cons_expected_return: !!float 0.02
+                    turnover_rate: !!float 0.1
+                    account_consume: !!float 0.1
+                YHOO:
+                    utility: !!int 102
+                    cons_expected_return: !!float 0
+                    turnover_rate: !!float 0
+                    account_consume: !!float 0
+            asset:
+                AAPL: !!int 0
+                YHOO: !!int 0
+            cash: !!float 10000
+        Mike_con:
+            consumer_features:
+                AAPL:
+                    utility: !!int 102
+                    cons_expected_return: !!float 0.02
+                    turnover_rate: !!float 0.1
+                    account_consume: !!float 0.1
+                YHOO:
+                    utility: !!int 102
+                    cons_expected_return: !!float 0
+                    turnover_rate: !!float 0
+                    account_consume: !!float 0
+            asset:
+                AAPL: !!int 0
+                YHOO: !!int 0
+            cash: !!float 10000
+        Edward_con:
+            consumer_features:
+                AAPL:
+                    utility: !!int 102
+                    cons_expected_return: !!float 0.02
+                    turnover_rate: !!float 0.1
+                    account_consume: !!float 0.1
+                YHOO:
+                    utility: !!int 102
+                    cons_expected_return: !!float 0
+                    turnover_rate: !!float 0
+                    account_consume: !!float 0
+            asset:
+                AAPL: !!int 0
+                YHOO: !!int 0
+            cash: !!float 10000
+
+exchange:
+    exchange_id: UMQD
+    market:
+        AAPL:
+            tick_size: !!float 0.25
+            margin: !!int 1
+            commission: !!int 1
+        YHOO:
+            tick_size: !!float 0.25
+            margin: !!int 1
+            commission: !!int 1
