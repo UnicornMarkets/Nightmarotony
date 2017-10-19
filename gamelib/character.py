@@ -9,7 +9,7 @@ class Character(pygame.sprite.Sprite):
     def __init__(self, *groups):
         super(Character, self).__init__(*groups)
         self.sprite_dict = {}
-        self.speed = 55.0
+        self.speed = 150.0
         self.image_turn = 1
         self.block_direction = []
         self.direction = {0:'front',1:'front_right', 2:'right',3:'right_back',
