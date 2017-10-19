@@ -9,7 +9,7 @@ class Character(pygame.sprite.Sprite):
     def __init__(self, *groups):
         super(Character, self).__init__(*groups)
         self.sprite_dict = {}
-        self.speed = 55
+        self.speed = 55.0
         self.image_turn = 1
         self.block_direction = []
         self.direction = {0:'front',1:'front_right', 2:'right',3:'right_back',
@@ -29,7 +29,7 @@ class Character(pygame.sprite.Sprite):
             self.sprite_dict[animate] = pygame.image.load(data.filepath("Game", animate + ".png"))
         self.image = self.sprite_dict['front']
         image_size = self.image.get_size()
-        self.rect = pygame.rect.Rect((320, 370), (image_size[0] / 2, image_size[1] / 2))
+        self.rect = pygame.rect.Rect((320, 370), (image_size[0], image_size[1]))
 
 
     def update(self, game):
@@ -77,29 +77,29 @@ class Character(pygame.sprite.Sprite):
                 self.rect.y -= self.speed * game.dt
                 self.check_block(shelf_rect, 0)
             if self.now_direction == 1:
-                self.rect.y -= self.speed * game.dt
-                self.rect.x += self.speed * game.dt
+                self.rect.y -= sqrt((self.speed ** 2)/2) * game.dt
+                self.rect.x += sqrt((self.speed ** 2)/2) * game.dt
                 self.check_block(shelf_rect, 1)
             if self.now_direction == 2:
                 self.rect.x += self.speed * game.dt
                 self.check_block(shelf_rect, 2)
             if self.now_direction == 3:
-                self.rect.y += self.speed * game.dt
-                self.rect.x += self.speed * game.dt
+                self.rect.y += sqrt((self.speed ** 2)/2) * game.dt
+                self.rect.x += sqrt((self.speed ** 2)/2) * game.dt
                 self.check_block(shelf_rect, 3)
             if self.now_direction == 4:
                 self.rect.y += self.speed * game.dt
                 self.check_block(shelf_rect, 4)
             if self.now_direction == 5:
-                self.rect.y += self.speed * game.dt
-                self.rect.x -= self.speed * game.dt
+                self.rect.y += sqrt((self.speed ** 2)/2) * game.dt
+                self.rect.x -= sqrt((self.speed ** 2)/2) * game.dt
                 self.check_block(shelf_rect, 5)
             if self.now_direction == 6:
                 self.rect.x -= self.speed * game.dt
                 self.check_block(shelf_rect, 6)
             if self.now_direction == 7:
-                self.rect.y -= self.speed * game.dt
-                self.rect.x -= self.speed * game.dt
+                self.rect.y -= sqrt((self.speed ** 2)/2) * game.dt
+                self.rect.x -= sqrt((self.speed ** 2)/2) * game.dt
                 self.check_block(shelf_rect, 7)
 
     def check_block(self, shelf_rect, direction):
