@@ -1,5 +1,6 @@
 import pygame
-
+import time
+from random import choice
 import yaml
 try:
     import const
@@ -19,7 +20,7 @@ class State:
         if self.state_name == 'shelf':
             self.run_shelf_state(real_screen)
         if self.state_name == 'door':
-            return self.run_door_state(real_screen)
+            return self.run_door_state1(real_screen)
 
     def run_shelf_state(self, real_screen):
         self.screen =  pygame.surface.Surface(
@@ -86,38 +87,43 @@ class State:
     def run_door_state1(self, real_screen):
         self.screen = pygame.surface.Surface(
             (2 * const.WIDTH, 2 * const.HEIGHT))
+        clock = time.time()
         true_image = pygame.transform.scale(pygame.image.load(
-                data.filepath("Game", "true.png")), (60, 60))
+                data.filepath("Game", "true.png")), (80, 80))
         false_image = pygame.transform.scale(pygame.image.load(
-                data.filepath("Game", "false.png")), (60, 60))
+                data.filepath("Game", "false.png")), (80, 80))
         correction = 0
         button = {}
-        word = self.change_word()
-        result = None
+        word, color, sur = self.change_word()
         while True:
             self.screen.fill(0)
-            button[0] = self.screen.blit(false_image[id], [50, 40])
-            button[1] = self.screen.blit(true_image[id], [100, 40])
+            self.screen.blit(sur, [150, 20])
+            button[0] = self.screen.blit(false_image, [200, 80])
+            button[1] = self.screen.blit(true_image, [50, 80])
             pygame.display.flip()
             for event in pygame.event.get():
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
                         position = pygame.mouse.get_pos()
                         if button[0].collidepoint(position):
-                            result = self.check_correct()
-                            if result == False:
+                            if self.check_correct(word, color) == False:
                                 correction += 1
-                    word = self.change_word()
+                            print(self.check_correct(word, color), correction)
+                        word, color, sur = self.change_word()
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
                         position = pygame.mouse.get_pos()
                         if button[1].collidepoint(position):
-                            result = self.check_correct()
-                            if result == True:
+                            if self.check_correct(word, color) == True:
                                 correction += 1
-                    word = self.change_word()
-            if correction >= 15 :
+                            print(self.check_correct(word, color), correction)
+                        word, color, sur = self.change_word()
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_q:
+                    return None
+            if correction >= 5 :
                 return 'escape'
+            if time.time()-clock >= 30:
+                return None
 
             pygame.transform.scale(self.screen,
                                    (2 * const.WIDTH, 2 * const.HEIGHT),
@@ -130,16 +136,21 @@ class State:
             return None
 
     def change_word(self):
-        """color = {'red':(255, 0, 0), 'green'= (0, 255, 0)
+        color_red = (255, 0, 0)
+        color_green = (0, 255, 0)
         color_blue = (0, 0, 255)
-        fontObj = pygame.font.Font('LOWRBI__.TTF', 32)
+        color = {'red':color_red, 'green':color_green, 'blue':color_blue}
+        word = ['red', 'green', 'blue']
+        now_color = choice(list(color.keys()))
+        now_word = choice(word)
+        pygame.font.init()
+        fontObj = pygame.font.SysFont('Arial', 32)
+        textSurfaceObj = fontObj.render(now_word, False,
+                                        color[now_color])
+        return now_word, now_color, textSurfaceObj
 
-        # 创建一个存放文字surface对象，
-        textSurfaceObj = fontObj.render(u'HELLO MONCHHICHI', False,
-                                        color_green)
-
-        # 文字图像位置
-        textRectObj = textSurfaceObj.get_rect()
-
-        # 第二组文字
-        fontObj2 = pygame.font.Font('simkai.TTF', 20)"""
+    def check_correct(self, word, color):
+        if word == color:
+            return True
+        else:
+            return False
