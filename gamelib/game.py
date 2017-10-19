@@ -1,5 +1,7 @@
 import pygame
 import sys
+import datetime as dt
+
 try:
     import const
     import data
@@ -18,11 +20,11 @@ except:
 import pytmx
 from pytmx.util_pygame import load_pygame
 
-class GameWindow(object):
 
+class GameWindow(object):
     def __init__(self):
         pygame.display.set_caption('Nightmarotony')
-        self.screen = pygame.display.set_mode((2*const.WIDTH, 2*const.HEIGHT))
+        self.screen = pygame.display.set_mode((2 * const.WIDTH, 2 * const.HEIGHT))
 
         try:
             pygame.mixer.init()
@@ -33,24 +35,84 @@ class GameWindow(object):
     def intro(self):
 
         start = Intro(self).loop()
+
         if start:
+            self.transition()
+
+    def transition(self):
+        move_on = Transition(self).loop()
+
+        if move_on:
             self.game()
 
     def game(self):
         Game(self).loop()
 
-class Intro(object):
 
+class Transition(object):
     def __init__(self, window):
         self.window = window
         self.real_screen = window.screen
-        self.screen = pygame.surface.Surface((2*const.WIDTH, 2*const.HEIGHT))
+        self.screen = pygame.surface.Surface((2 * const.WIDTH, 2 * const.HEIGHT))
+        self.clock = pygame.time.Clock()
+        self.clock.tick(60)
+        self.move_on = False
+
+    def loop(self):
+
+        intro = pygame.image.load(data.filepath("Cover", "intro.png"))
+        intro_scaled = pygame.transform.scale(intro, (700, 700))
+
+        pygame.mixer.music.fadeout(const.FADEOUT_TIME)
+        start_time = dt.datetime.now()
+
+        while not self.move_on:
+            if dt.datetime.now() - start_time >= dt.timedelta(seconds=const.FADEOUT_TIME/1000):
+                intro = pygame.image.load(data.filepath("Cover", "intro-2.png"))
+                intro_scaled = pygame.transform.scale(intro, (700, 700))
+
+            pygame.display.update()
+            self.screen.fill(0)
+            self.screen.blit(intro_scaled, (0, 0))
+
+            for event in pygame.event.get():
+                if event.type == pygame.KEYDOWN:
+
+                    if event.key == pygame.K_ESCAPE:
+                        sys.exit()
+
+                    elif event.key == pygame.K_SPACE:
+                        self.move_on = True
+
+                elif event.type == pygame.QUIT:
+                    sys.exit()
+
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    self.move_on = True
+
+            if self.move_on is True:
+                pygame.mixer.music.stop()
+
+            self.screen.blit(self.screen, (0, 0))
+            pygame.transform.scale(self.screen, (2 * const.WIDTH, 2 * const.HEIGHT),
+                                   self.real_screen)
+            pygame.display.flip()
+
+        return self.move_on
+
+
+class Intro(object):
+    def __init__(self, window):
+        self.window = window
+        self.real_screen = window.screen
+        self.screen = pygame.surface.Surface((2 * const.WIDTH, 2 * const.HEIGHT))
         self.start_string = "nightmarotony cover_00"
         self.clock = pygame.time.Clock()
         self.clock.tick(60)
         pygame.mixer.music.load(data.filepath('Audio', 'welcome.mp3'))
         pygame.mixer.music.set_volume(const.SOUND_VOLUME)
         pygame.mixer.music.play(-1)
+        self.start = False
 
     def loop(self):
 
@@ -58,14 +120,14 @@ class Intro(object):
         image_num = 0
         num_str = '{0:03}'.format(image_num)
         button = None
-        image = pygame.image.load(data.filepath("Cover Image Sequence", \
-                                     self.start_string + num_str + ".jpg"))
+        image = pygame.image.load(data.filepath("Cover Image Sequence",
+                                                self.start_string + num_str + ".jpg"))
 
-        pygame.transform.scale(self.screen, (2*const.WIDTH, 2*const.HEIGHT),
-                                                            self.real_screen)
+        pygame.transform.scale(self.screen, (2 * const.WIDTH, 2 * const.HEIGHT),
+                               self.real_screen)
         button = None
         pygame.display.update()
-        self.start = False
+
         last_time = pygame.time.get_ticks()
         while not self.start:
 
@@ -76,20 +138,18 @@ class Intro(object):
             elif pygame.time.get_ticks() > last_time + 20:
                 image_num += 1
                 num_str = '{0:03}'.format(image_num)
-                image = pygame.image.load(data.filepath("Cover Image Sequence", \
-                                             self.start_string + num_str + ".jpg"))
+                image = pygame.image.load(data.filepath("Cover Image Sequence",
+                                                        self.start_string + num_str + ".jpg"))
                 last_time = pygame.time.get_ticks()
 
-            pygame.transform.scale(self.screen, (2*const.WIDTH, 2*const.HEIGHT),
-                                                               self.real_screen)
+            pygame.transform.scale(self.screen, (2 * const.WIDTH, 2 * const.HEIGHT),
+                                   self.real_screen)
             pygame.display.flip()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     sys.exit()
                 if image_num == 155 and button:
                     self.on_start(event, button)
-
-        pygame.mixer.music.fadeout(const.FADEOUT_TIME)
 
         return self.start
 
@@ -111,23 +171,22 @@ class Intro(object):
                     startsound.set_volume(const.SOUND_VOLUME)
                     startsound.play()
 
-class Game(object):
 
+class Game(object):
     def __init__(self, window):
         self.window = window
         self.real_screen = window.screen
         self.state = State()
-        self.screen = pygame.surface.Surface((2*const.WIDTH, 2*const.HEIGHT))
+        self.screen = pygame.surface.Surface((2 * const.WIDTH, 2 * const.HEIGHT))
         self.clock = pygame.time.Clock()
         self.dt = self.clock.tick(30) / 1000.0
         self.sprites = pygame.sprite.Group()
         self.player = Character(self.sprites)
-        self.shelf = Shelf((self.sprites))
-        self.door = Door((self.sprites))
+        self.shelf = Shelf(self.sprites)
+        self.door = Door(self.sprites)
         self.grass = pygame.image.load(data.filepath("Game", "grass.png"))
         self.map = load_pygame("Tilemap/tmx/Dungeon.tmx")
         self.result = None
-
 
         pygame.mixer.music.load(data.filepath('Audio', 'theme.mp3'))
         pygame.mixer.music.set_volume(const.SOUND_VOLUME)
@@ -138,7 +197,7 @@ class Game(object):
 
     def loop(self):
         print(self.map)
-        #props = self.get_tile_properties(x, y, layer)
+        # props = self.get_tile_properties(x, y, layer)
         print(self.map.properties, 'property')
         print(self.map.layers, 'layer')
         for layer in self.map.visible_layers:
@@ -148,10 +207,9 @@ class Game(object):
         object = self.map.objects
         print(self.map.objectgroups, 'object group')
 
-
         while 1:
             self.views()
-            if self.result == None:
+            if self.result is None:
                 self.event_processor()
             elif self.result == 'escape':
                 self.finish_game()
@@ -171,13 +229,13 @@ class Game(object):
     def event_processor(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.mixer.music.fadeout(const.FADEOUT_TIME)
+                pygame.mixer.music.stop()
                 pygame.quit()
                 exit(0)
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    pygame.mixer.music.fadeout(const.FADEOUT_TIME)
+                    pygame.mixer.music.stop()
                     sys.exit()
             if event.type == pygame.KEYDOWN:
                 self.player.choose_direction()
@@ -192,7 +250,7 @@ class Game(object):
             if self.player.rect.colliderect(self.door.rect):
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     self.result = self.state.run_state('door', self.real_screen)
-                    print self.result
+                    # print self.result
 
         self.screen.blit(self.screen, (0, 0))
         pygame.transform.scale(self.screen,
@@ -212,6 +270,7 @@ class Game(object):
             self.screen.fill((255, 255, 255))
             self.screen.blit(success, (200, 250))
             pygame.display.flip()
+
 
 class Level:
     def __init__():
