@@ -13,6 +13,7 @@ except:
 
 class State:
     def __init__(self, level, state_name=None):
+        self.level = level
         self.real_screen = level.real_screen
         self.state_name = state_name
         self.information = yaml.load(data.filepath("configs", "state.yaml"))
@@ -36,8 +37,8 @@ class State:
                 if ent_exit == "exit":
                     image_num -= 1
                 num_str = '{0:03}'.format(image_num)
-                self.background = pygame.image.load(data.filepath("Purple Minigame",
-                                            "purple map_00" + num_str + ".png"))
+                self.background = pygame.image.load(data.filepath(level.directory,
+                                        level.bg_color + " map_00" + num_str + ".png"))
                 last_time = pygame.time.get_ticks()
 
             for event in pygame.event.get():
