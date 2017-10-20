@@ -37,8 +37,8 @@ class State:
                 if ent_exit == "exit":
                     image_num -= 1
                 num_str = '{0:03}'.format(image_num)
-                self.background = pygame.image.load(data.filepath(level.directory,
-                                        level.bg_color + " map_00" + num_str + ".png"))
+                self.background = pygame.image.load(data.filepath(self.level.directory,
+                                        self.level.bg_color + " map_00" + num_str + ".png"))
                 last_time = pygame.time.get_ticks()
 
             for event in pygame.event.get():
@@ -275,9 +275,7 @@ class State:
                 if 0 not in correction:
                     return 70
                 else:
-                    turns = 0
-                    last_word = None
-                    correction = numpy.zeros(goal_number)
+                    return -200
 
             if self.check_time(30000, last_time):
                 return None

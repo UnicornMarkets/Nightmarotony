@@ -179,10 +179,6 @@ class Game(object):
         self.screen = pygame.surface.Surface((2 * const.WIDTH, 2 * const.HEIGHT))
         self.clock = pygame.time.Clock()
         self.dt = self.clock.tick(30) / 1000.0
-        self.sprites = pygame.sprite.Group()
-        self.player = Character(self.sprites)
-        self.shelf = Shelf(self.sprites)
-        self.door = Door(self.sprites)
 
         pygame.mixer.music.load(data.filepath('Audio', 'theme.mp3'))
         pygame.mixer.music.set_volume(const.SOUND_VOLUME)
@@ -192,23 +188,40 @@ class Game(object):
         level_num = 1
         color_list = ['blue', 'green', 'red', 'purple']
         while 1:
-            if level_num > 0 and level_num < 70:
+            if level_num > 0 and level_num <= 70:
                 level_string = "level" + str(level_num)
                 result = Level(self, level_string, 'blue').loop()
                 level_num += result
             elif level_num > 70:
                 self.win_game()
-            elif level_num < 0:
+            elif level_num <= 0:
                 self.lose_game()
 
     def win_game(self):
-        start_string = "Comp 2_00"
+        start_string = "YOU WON_00"
+        directory = "End Sequence YOU WON"
+        image_count = 215
+
+        self.animate(start_string, directory, image_count)
+
+        self.loop()
+
+    def lose_game(self):
+        start_string = "YOU LOST_00"
+        directory = "End Sequence YOU LOST"
+        image_count = 215
+
+        self.animate(start_string, directory, image_count)
+
+        self.loop()
+
+    def animate(self, start_string, directory, image_count):
         restartbar = pygame.transform.scale(pygame.image.load(data.filepath("Cover",
                                                       "restart-01.png")), (118, 59))
         image_num = 0
         num_str = '{0:03}'.format(image_num)
         button = None
-        image = pygame.image.load(data.filepath("Ending Sequence",
+        image = pygame.image.load(data.filepath(directory,
                                             start_string + num_str + ".png"))
 
         pygame.transform.scale(self.screen, (2 * const.WIDTH, 2 * const.HEIGHT),
@@ -221,13 +234,13 @@ class Game(object):
 
             self.screen.blit(image, (0, 0))
 
-            if image_num == 119:
+            if image_num == image_count:
                 button = self.screen.blit(restartbar, (500, 600))
             elif pygame.time.get_ticks() > last_time + 20:
                 image_num += 1
                 num_str = '{0:03}'.format(image_num)
-                image = pygame.image.load(data.filepath("Ending Sequence",
-                                                        start_string + num_str + ".png"))
+                image = pygame.image.load(data.filepath(directory,
+                                                start_string + num_str + ".png"))
                 last_time = pygame.time.get_ticks()
 
             pygame.transform.scale(self.screen, (2 * const.WIDTH, 2 * const.HEIGHT),
@@ -245,19 +258,18 @@ class Game(object):
                         pygame.mixer.music.fadeout(const.FADEOUT_TIME)
                         sys.exit()
 
-                if image_num == 119 and button:
+                if image_num == image_count and button:
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         if event.button == 1:
                             position = pygame.mouse.get_pos()
                             if button.collidepoint(position):
                                 restart = True
 
-        self.loop()
-
-    def lose_game(self):
-        pass
-
-
+class ScrolledGroup(pygame.sprite.Group):
+    def draw(self, surface):
+        for sprite in self.sprites():
+            surface.blit(sprite.image, (sprite.rect.x - self.camera_x,
+                                        sprite.rect.y - self.camera_y))
 
 class Level:
     def __init__(self, game, level_string, bg_color):
@@ -274,34 +286,45 @@ class Level:
         self.window = game.window
         self.real_screen = game.real_screen
         self.screen = pygame.surface.Surface((2*const.WIDTH, 2*const.HEIGHT))
-        self.player = game.player
         self.level = eval(level_string)
         self.background = pygame.image.load(data.filepath(self.directory,
                                             self.bg_color + " map_00000.png"))
-        self.sprites = game.sprites
+        self.dt = game.dt
         self.result = None
-        self.walls = pygame.sprite.Group()
-        # set up params to determine which level to make
+        self.sprites = pygame.sprite.Group()
+
+    def player_setup(self):
+        self.player_sprite = ScrolledGroup()
+        self.player_sprite.camera_x = 0
+        self.player_sprite.camera_y = 0
+        self.player = Character(self.player_sprite)
+        #self.sprites.add(self.player_sprite)
+
+    def object_setup(self):
+        # add objects into the map_
+        self.objects = pygame.sprite.Group()
+        self.shelf = Shelf(self.objects)
+        self.door = Door(self.objects)
+        self.sprites.add(self.objects)
 
     def map_setup(self):
 
+        self.walls = pygame.sprite.Group()
         num_row = len(self.level)
         num_col = len(self.level[0])
 
         for row in range(num_row):
             for col in range(num_col):
                 if self.level[row][col] == True:
-                    Block(row, col, const.BLOCK_SIZE, self.walls, self.sprites)
-
+                    Block(row * const.BLOCK_SIZE + 128, col * const.BLOCK_SIZE + 128,
+                                const.BLOCK_SIZE, self.walls, self.sprites)
 
         #uses the level maps to generate a map that the player walks through
 
-        #TODO: in self.level get all lists and iterate. Create Blocks where true
-        pass
-
     def loop(self):
-        # TODO: loop to keep level running
-        # TODO: setup a background of purple minigame 0
+        self.player_setup()
+        self.map_setup()
+        self.object_setup()
         while 1:
             self.views()
             self.event_processor()
@@ -310,13 +333,13 @@ class Level:
 
 
     def views(self):
-        self.sprites.update(self.game)
-        self.screen.fill(0)
+        self.sprites.update(self)
+        self.player_sprite.update(self)
 
         self.screen.blit(self.background, (0, 0))
-        self.screen.blit(self.player.image, self.player.rect)
-        self.screen.blit(self.game.shelf.image, self.game.shelf.rect)
-        self.screen.blit(self.game.door.image, self.game.door.rect)
+        self.sprites.draw(self.screen)
+        self.player_sprite.draw(self.screen)
+
         pygame.transform.scale(self.screen,
                                (2 * const.WIDTH, 2 * const.HEIGHT),
                                self.real_screen)
@@ -340,12 +363,12 @@ class Level:
                 if event.key == pygame.K_w:
                     self.player.standing()
 
-            if self.player.rect.colliderect(self.game.shelf.rect):
+            if self.player.rect.colliderect(self.shelf.rect):
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     state = State(self, state_name='shelf')
                     state.run_state(self.real_screen)
 
-            if self.player.rect.colliderect(self.game.door.rect):
+            if self.player.rect.colliderect(self.door.rect):
                 if event.type == pygame.MOUSEBUTTONDOWN:
 
                     state = State(self, state_name='door')
