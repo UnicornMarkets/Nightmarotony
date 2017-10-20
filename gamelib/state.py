@@ -75,12 +75,20 @@ class State:
         shelf_info = pygame.image.load(
           data.filepath("Game", "shelf_info.png"))
         while True:
-            self.screen.fill(0)
+            self.screen.blit(self.background, (0, 0))
             self.screen.blit(shelf_info, [40, 100])
             pygame.display.flip()
             for event in pygame.event.get():
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     return True
+                if event.type == pygame.QUIT:
+                    pygame.mixer.music.stop()
+                    pygame.quit()
+                    exit(0)
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        pygame.mixer.music.fadeout(const.FADEOUT_TIME)
+                        sys.exit()
             pygame.transform.scale(self.screen,
                                    (2 * const.WIDTH, 2 * const.HEIGHT),
                                    real_screen)
@@ -125,6 +133,15 @@ class State:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_q:
                         return True
+                if event.type == pygame.QUIT:
+                    pygame.mixer.music.stop()
+                    pygame.quit()
+                    exit(0)
+
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        pygame.mixer.music.fadeout(const.FADEOUT_TIME)
+                        sys.exit()
             if result == 'escape':
                 return result
             pygame.transform.scale(self.screen,
@@ -135,18 +152,17 @@ class State:
         self.screen = pygame.surface.Surface(
             (2 * const.WIDTH, 2 * const.HEIGHT))
         clock = time.time()
-        true_image = pygame.transform.scale(pygame.image.load(
-                data.filepath("Game", "true.png")), (80, 80))
-        false_image = pygame.transform.scale(pygame.image.load(
-                data.filepath("Game", "false.png")), (80, 80))
+        true_image = pygame.image.load(data.filepath("Game", "true.png"))
+        false_image = pygame.image.load(data.filepath("Game", "false.png"))
         correction = 0
         button = {}
         word, color, sur = self.change_word()
         while True:
             self.screen.fill(0)
-            self.screen.blit(sur, [150, 20])
-            button[0] = self.screen.blit(false_image, [200, 80])
-            button[1] = self.screen.blit(true_image, [50, 80])
+            self.screen.blit(sur, [250, 250])
+            self.screen.blit(self.background, (0, 0))
+            button[0] = self.screen.blit(false_image, [300, 200])
+            button[1] = self.screen.blit(true_image, [300, 300])
             pygame.display.flip()
             for event in pygame.event.get():
                 if event.type == pygame.MOUSEBUTTONDOWN:
@@ -165,6 +181,15 @@ class State:
                         word, color, sur = self.change_word()
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_q:
                     return None
+                if event.type == pygame.QUIT:
+                    pygame.mixer.music.stop()
+                    pygame.quit()
+                    exit(0)
+
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        pygame.mixer.music.fadeout(const.FADEOUT_TIME)
+                        sys.exit()
             if correction >= 5 :
                 return 70
             if time.time()-clock >= 30:
@@ -221,9 +246,9 @@ class State:
                 word[new_word] = fontObj.render(str(new_word), False,(255, 0, 0))
                 word_list += [new_word]
         while True:
-            self.screen.fill(0)
+            self.screen.blit(self.background, (0, 0))
             for x in range(0, len(word_list)):
-                button[x] = self.screen.blit(word[word_list[x]], [200, x*40])
+                button[x] = self.screen.blit(word[word_list[x]], [320, 240+x*40])
             pygame.display.flip()
             for event in pygame.event.get():
                 if event.type == pygame.MOUSEBUTTONDOWN:
@@ -238,6 +263,15 @@ class State:
 
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_q:
                     return None
+                if event.type == pygame.QUIT:
+                    pygame.mixer.music.stop()
+                    pygame.quit()
+                    exit(0)
+
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        pygame.mixer.music.fadeout(const.FADEOUT_TIME)
+                        sys.exit()
             if turns >= goal_number :
                 if 0 not in correction:
                     return 70
