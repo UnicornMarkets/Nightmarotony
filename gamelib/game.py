@@ -1,6 +1,7 @@
 import pygame
 import sys
 import os
+import random
 
 try:
     import const
@@ -40,7 +41,7 @@ class GameWindow(object):
             self.transition()
 
     def transition(self):
-        move_on = Transition(self).loop()
+        move_on = Transition(self).loop('intro')
 
         if move_on:
             self.game()
@@ -129,22 +130,29 @@ class Transition(object):
         self.clock.tick(60)
         self.move_on = False
 
-    def loop(self):
-
-        intro = pygame.image.load(data.filepath("Cover", "intro.png"))
-        intro_scaled = pygame.transform.scale(intro, (700, 700))
-
-        pygame.mixer.music.fadeout(const.FADEOUT_TIME)
+    def loop(self, ltype):
+        img = pygame.image.load(data.filepath("Cover", "intro.png"))
+        img_scaled = pygame.transform.scale(img, (700, 700))
         start_time = pygame.time.get_ticks()
+        pygame.mixer.music.fadeout(const.FADEOUT_TIME)
+
+        if ltype == 'transition':
+            img_name = "transition_" + str(random.randint(1, 18)) + ".png"
+            img = pygame.image.load(data.filepath("Transitions", img_name))
+            img_scaled = pygame.transform.scale(img, (700, 700))
+
+            pygame.mixer.music.load(data.filepath("Audio", "transition.wav"))
+            pygame.mixer.music.set_volume(const.SOUND_VOLUME)
+            pygame.mixer.music.play(-1)
 
         while not self.move_on:
-            if pygame.time.get_ticks() >= start_time + const.FADEOUT_TIME:
-                intro = pygame.image.load(data.filepath("Cover", "intro-2.png"))
-                intro_scaled = pygame.transform.scale(intro, (700, 700))
+            if ltype == 'intro':
+                if pygame.time.get_ticks() >= start_time + const.FADEOUT_TIME:
+                    img = pygame.image.load(data.filepath("Cover", "intro-2.png"))
+                    img_scaled = pygame.transform.scale(img, (700, 700))
 
             pygame.display.update()
-            self.screen.fill(0)
-            self.screen.blit(intro_scaled, (0, 0))
+            self.screen.blit(img_scaled, (0, 0))
 
             for event in pygame.event.get():
                 if event.type == pygame.KEYDOWN:
@@ -184,20 +192,30 @@ class Game(object):
         self.shelf = Shelf(self.sprites)
         self.door = Door(self.sprites)
 
-        pygame.mixer.music.load(data.filepath('Audio', 'theme.mp3'))
-        pygame.mixer.music.set_volume(const.SOUND_VOLUME)
-        pygame.mixer.music.play(-1)
-
     def loop(self):
         level_num = 1
+
         while 1:
             if level_num > 0 and level_num < 70:
+                pygame.mixer.music.load(data.filepath('Audio', 'theme.mp3'))
+                pygame.mixer.music.set_volume(const.SOUND_VOLUME)
+                pygame.mixer.music.play(-1)
+
                 level_string = "level" + str(level_num)
                 result = Level(self, level_string).loop()
                 level_num += result
+                Transition(self).loop('transition')
+
             elif level_num > 70:
+                pygame.mixer.music.load(data.filepath('Audio', 'win.wav'))
+                pygame.mixer.music.set_volume(const.SOUND_VOLUME)
+                pygame.mixer.music.play(-1)
                 self.win_game()
+
             elif level_num < 0:
+                pygame.mixer.music.load(data.filepath('Audio', 'lose.wav'))
+                pygame.mixer.music.set_volume(const.SOUND_VOLUME)
+                pygame.mixer.music.play(-1)
                 self.lose_game()
 
     def win_game(self):

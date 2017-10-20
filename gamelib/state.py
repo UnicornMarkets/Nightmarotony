@@ -225,8 +225,7 @@ class State:
             return False
 
     def run_door_state2(self, real_screen):
-        self.screen = pygame.surface.Surface(
-            (2 * const.WIDTH, 2 * const.HEIGHT))
+        self.screen = pygame.surface.Surface((2 * const.WIDTH, 2 * const.HEIGHT))
         clock = time.time()
         total = {}
         turns = 0
