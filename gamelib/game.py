@@ -116,7 +116,8 @@ class Intro(object):
     def loop(self):
 
         start_string = "nightmarotony cover_00"
-        startbar = pygame.image.load(data.filepath("Cover", "startbutton.png"))
+        startbar = pygame.transform.scale(pygame.image.load(data.filepath("Cover",
+                                                    "startbutton.png")), (118, 59))
         image_num = 0
         num_str = '{0:03}'.format(image_num)
         button = None
@@ -125,7 +126,6 @@ class Intro(object):
 
         pygame.transform.scale(self.screen, (2 * const.WIDTH, 2 * const.HEIGHT),
                                self.real_screen)
-        button = None
         pygame.display.update()
 
         last_time = pygame.time.get_ticks()
@@ -134,7 +134,7 @@ class Intro(object):
             self.screen.blit(image, (0, 0))
 
             if image_num == 155:
-                button = self.screen.blit(startbar, (250, 400))
+                button = self.screen.blit(startbar, (300, 400))
             elif pygame.time.get_ticks() > last_time + 20:
                 image_num += 1
                 num_str = '{0:03}'.format(image_num)
@@ -189,21 +189,50 @@ class Game(object):
         pygame.mixer.music.play(-1)
 
     def loop(self):
-        result = None
         level_num = 1
         while 1:
-            if result is None:
+            if level_num > 0 and level_num < 70:
                 level_string = "level" + str(level_num)
                 result = Level(self, level_string).loop()
                 level_num += result
-            elif result == 70:
-                self.finish_game()
+            elif level_num > 70:
+                self.win_game()
+            elif level_num < 0:
+                self.lose_game()
 
-    def finish_game(self):
-        self.screen = pygame.display.set_mode((700, 700))
-        success = pygame.image.load(data.filepath("Cover", "passed.png"))
+    def win_game(self):
+        start_string = "Comp 2_00"
+        restartbar = pygame.transform.scale(pygame.image.load(data.filepath("Cover",
+                                                      "restart-01.png")), (118, 59))
+        image_num = 0
+        num_str = '{0:03}'.format(image_num)
+        button = None
+        image = pygame.image.load(data.filepath("Ending Sequence",
+                                            start_string + num_str + ".png"))
 
-        while 1:
+        pygame.transform.scale(self.screen, (2 * const.WIDTH, 2 * const.HEIGHT),
+                               self.real_screen)
+        pygame.display.update()
+
+        last_time = pygame.time.get_ticks()
+        restart = False
+        while not restart:
+
+            self.screen.blit(image, (0, 0))
+
+            if image_num == 119:
+                button = self.screen.blit(restartbar, (500, 600))
+            elif pygame.time.get_ticks() > last_time + 20:
+                image_num += 1
+                num_str = '{0:03}'.format(image_num)
+                image = pygame.image.load(data.filepath("Ending Sequence",
+                                                        start_string + num_str + ".png"))
+                last_time = pygame.time.get_ticks()
+
+            pygame.transform.scale(self.screen, (2 * const.WIDTH, 2 * const.HEIGHT),
+                                   self.real_screen)
+            pygame.display.flip()
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.mixer.music.stop()
@@ -215,9 +244,18 @@ class Game(object):
                         pygame.mixer.music.fadeout(const.FADEOUT_TIME)
                         sys.exit()
 
-            self.screen.fill((255, 255, 255))
-            self.screen.blit(success, (200, 250))
-            pygame.display.flip()
+                if image_num == 119 and button:
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        if event.button == 1:
+                            position = pygame.mouse.get_pos()
+                            if button.collidepoint(position):
+                                restart = True
+
+        self.loop()
+
+    def lose_game(self):
+        pass
+
 
 
 class Level:
