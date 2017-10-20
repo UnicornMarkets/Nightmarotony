@@ -18,16 +18,9 @@ class State:
         self.information = yaml.load(data.filepath("configs", "state.yaml"))
         self.background = level.background
         self.screen = pygame.surface.Surface((2 * const.WIDTH, 2 * const.HEIGHT))
-        self.start = False
+        self.exit_animation = False
 
-    def starting_animation(self):
-        pass
-        # move animation to here
-
-
-    def run_state(self, real_screen):
-
-        image_num = 0
+    def animation(self, ent_exit, image_num):
         num_str = '{0:03}'.format(image_num)
         last_time = pygame.time.get_ticks()
         self.screen.blit(self.background, (0, 0))
@@ -35,10 +28,13 @@ class State:
                                self.real_screen)
         pygame.display.flip()
 
-        while not self.start:
+        while not self.exit_animation:
 
             if pygame.time.get_ticks() > last_time + 5:
-                image_num += 1
+                if ent_exit == "enter":
+                    image_num += 1
+                if ent_exit == "exit":
+                    image_num -= 1
                 num_str = '{0:03}'.format(image_num)
                 self.background = pygame.image.load(data.filepath("Purple Minigame",
                                             "purple map_00" + num_str + ".png"))
@@ -47,18 +43,31 @@ class State:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     sys.exit()
-            if image_num == 71:
-                self.start = True
+            if image_num == 71 or image_num == 0:
+                self.exit_animation = True
 
             self.screen.blit(self.background, (0, 0))
             pygame.transform.scale(self.screen, (2 * const.WIDTH, 2 * const.HEIGHT),
                                    self.real_screen)
             pygame.display.flip()
 
+
+    def run_state(self, real_screen):
+
+        return_value = None
+
+        self.animation("enter", 0)
+        self.exit_animation = False
+
         if self.state_name == 'shelf':
             self.run_shelf_state(real_screen)
         if self.state_name == 'door':
-            return self.run_door_state2(real_screen)
+            return_value = self.run_door_state2(real_screen)
+
+        self.animation("exit", 71)
+
+        return return_value
+
 
     def run_shelf_state(self, real_screen):
         self.screen =  pygame.surface.Surface(
@@ -157,7 +166,7 @@ class State:
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_q:
                     return None
             if correction >= 5 :
-                return 'escape'
+                return 70
             if time.time()-clock >= 30:
                 return None
 
@@ -231,7 +240,7 @@ class State:
                     return None
             if turns >= goal_number :
                 if 0 not in correction:
-                    return 'escape'
+                    return 70
                 else:
                     turns = 0
                     last_word = None

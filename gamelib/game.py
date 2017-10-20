@@ -10,6 +10,7 @@ try:
     from shelf import Shelf
     from door import Door
     from state import State
+    from block import Block
     from levels import *
 except:
     from gamelib import const, data, gifimage
@@ -17,6 +18,7 @@ except:
     from gamelib.shelf import Shelf
     from gamelib.state import State
     from gamelib.door import Door
+    from gamelib.block import Block
     from gamelib.levels import *
 
 class GameWindow(object):
@@ -181,7 +183,6 @@ class Game(object):
         self.player = Character(self.sprites)
         self.shelf = Shelf(self.sprites)
         self.door = Door(self.sprites)
-        self.grass = pygame.image.load(data.filepath("Game", "grass.png"))
 
         pygame.mixer.music.load(data.filepath('Audio', 'theme.mp3'))
         pygame.mixer.music.set_volume(const.SOUND_VOLUME)
@@ -189,64 +190,30 @@ class Game(object):
 
     def loop(self):
         result = None
+        level_num = 1
         while 1:
-            self.views()
             if result is None:
-                #self.event_processor()
-                result = Level(self, level1).loop()
-            elif result == 'escape':
+                level_string = "level" + str(level_num)
+                result = Level(self, level_string).loop()
+                level_num += result
+            elif result == 70:
                 self.finish_game()
-
-    def views(self):
-        self.sprites.update(self)
-        self.screen.fill(0)
-        for x in range(0, 2 * const.WIDTH // self.grass.get_width() + 1):
-            for y in range(0, 2 * const.HEIGHT // self.grass.get_height() + 1):
-                self.screen.blit(self.grass, (x * 100, y * 100))
-
-        self.screen.blit(self.player.image, self.player.rect)
-        self.screen.blit(self.shelf.image, self.shelf.rect)
-        self.screen.blit(self.door.image, self.door.rect)
-        pygame.display.flip()
-
-    def event_processor(self):
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.mixer.music.stop()
-                pygame.quit()
-                exit(0)
-
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    pygame.mixer.music.fadeout(const.FADEOUT_TIME)
-                    sys.exit()
-            if event.type == pygame.KEYDOWN:
-                self.player.choose_direction()
-            if event.type == pygame.KEYUP:
-                if event.key == pygame.K_w:
-                    self.player.standing()
-
-
-            if self.player.rect.colliderect(self.shelf.rect):
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    state = State(state_name='shelf')
-                    state.run_state(self.real_screen)
-
-            if self.player.rect.colliderect(self.door.rect):
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    state = State(state_name='door')
-                    self.result = state.run_state(self.real_screen)
-
-        pygame.display.flip()
 
     def finish_game(self):
         self.screen = pygame.display.set_mode((700, 700))
         success = pygame.image.load(data.filepath("Cover", "passed.png"))
+
         while 1:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
+                    pygame.mixer.music.stop()
                     pygame.quit()
-                    return
+                    exit(0)
+
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        pygame.mixer.music.fadeout(const.FADEOUT_TIME)
+                        sys.exit()
 
             self.screen.fill((255, 255, 255))
             self.screen.blit(success, (200, 250))
@@ -254,23 +221,31 @@ class Game(object):
 
 
 class Level:
-    def __init__(self, game, level):
+    def __init__(self, game, level_string):
         self.game = game
         self.window = game.window
         self.real_screen = game.real_screen
         self.screen = pygame.surface.Surface((2*const.WIDTH, 2*const.HEIGHT))
         self.player = game.player
-        self.level = level
+        self.level = eval(level_string)
         self.background = pygame.image.load(data.filepath("Purple Minigame",
                                                 "purple map_00000.png"))
         self.sprites = game.sprites
-        self.player = Character(self.sprites)
-        self.shelf = Shelf(self.sprites)
-        self.door = Door(self.sprites)
         self.result = None
+        self.walls = pygame.sprite.Group()
         # set up params to determine which level to make
 
     def map_setup(self):
+
+        num_row = len(self.level)
+        num_col = len(self.level[0])
+
+        for row in range(num_row):
+            for col in range(num_col):
+                if self.level[row][col] == True:
+                    Block(row, col, const.BLOCK_SIZE, self.walls, self.sprites)
+
+
         #uses the level maps to generate a map that the player walks through
 
         #TODO: in self.level get all lists and iterate. Create Blocks where true
@@ -292,8 +267,8 @@ class Level:
 
         self.screen.blit(self.background, (0, 0))
         self.screen.blit(self.player.image, self.player.rect)
-        self.screen.blit(self.shelf.image, self.shelf.rect)
-        self.screen.blit(self.door.image, self.door.rect)
+        self.screen.blit(self.game.shelf.image, self.game.shelf.rect)
+        self.screen.blit(self.game.door.image, self.game.door.rect)
         pygame.transform.scale(self.screen,
                                (2 * const.WIDTH, 2 * const.HEIGHT),
                                self.real_screen)
@@ -317,12 +292,12 @@ class Level:
                 if event.key == pygame.K_w:
                     self.player.standing()
 
-            if self.player.rect.colliderect(self.shelf.rect):
+            if self.player.rect.colliderect(self.game.shelf.rect):
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     state = State(self, state_name='shelf')
                     state.run_state(self.real_screen)
 
-            if self.player.rect.colliderect(self.door.rect):
+            if self.player.rect.colliderect(self.game.door.rect):
                 if event.type == pygame.MOUSEBUTTONDOWN:
 
                     state = State(self, state_name='door')
