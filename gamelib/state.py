@@ -240,7 +240,7 @@ class State:
                     return None
             if turns >= goal_number :
                 if 0 not in correction:
-                    return 'escape'
+                    return 70
                 else:
                     turns = 0
                     last_word = None
