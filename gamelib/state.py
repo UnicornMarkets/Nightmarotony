@@ -62,7 +62,7 @@ class State:
         if self.state_name == 'shelf':
             self.run_shelf_state(real_screen)
         if self.state_name == 'door':
-            return_value = self.run_door_state2(real_screen)
+            return_value = self.try_out_room(real_screen, [1, 2, 3, 4])
 
         self.animation("exit", 71)
 
@@ -72,11 +72,18 @@ class State:
     def run_shelf_state(self, real_screen):
         self.screen =  pygame.surface.Surface(
             (2 * const.WIDTH, 2 * const.HEIGHT))
-        shelf_info = pygame.image.load(
-          data.filepath("Game", "shelf_info.png"))
+        word_list = []
+        shelf_info = {}
+        while len(word_list) < 5:
+            new_word = random.randint(0,9)
+            if new_word not in word_list:
+                word_list += [new_word]
+                shelf_info[new_word] = pygame.transform.scale(pygame.image.load(
+                    data.filepath("Game", "num-" + str(new_word) + ".png")), (90,50))
         while True:
             self.screen.blit(self.background, (0, 0))
-            self.screen.blit(shelf_info, [40, 100])
+            for y in range(0, 4):
+                self.screen.blit(shelf_info[word_list[y]],[y * 100 + 150, 300])
             pygame.display.flip()
             for event in pygame.event.get():
                 if event.type == pygame.MOUSEBUTTONDOWN:
@@ -93,43 +100,41 @@ class State:
                                    (2 * const.WIDTH, 2 * const.HEIGHT),
                                    real_screen)
 
-    def run_door_state(self, real_screen):
+    def try_out_room(self, real_screen, password):
         self.screen =  pygame.surface.Surface(
             (2 * const.WIDTH, 2 * const.HEIGHT))
         door_image = {}
-        for id in [0,2,4,7]:
+        turns = 0
+        for id in range(0,10):
             door_image[id] = pygame.transform.scale(pygame.image.load(
-                data.filepath("Game", "num-" + str(id) +".png")), (40,40))
+                data.filepath("Game", "num-" + str(id) +".png")), (90,50))
         button = {}
         correction = [False, False, False, False]
         result = None
         while True:
             self.screen.fill(0)
-            for id in [0, 2, 4, 7]:
-                button[id] = self.screen.blit(door_image[id], [id*50, 40])
+            self.screen.blit(self.background, (0, 0))
+            button[0] = self.screen.blit(door_image[0], [300, 500])
+            for id in range (0,3):
+                for y in range (0,3):
+                    button[y + 1 + id * 3] = self.screen.blit(door_image[y + 1 +  id * 3], [y*100+200, id*100+200])
             pygame.display.flip()
             for event in pygame.event.get():
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
                         position = pygame.mouse.get_pos()
-                        if button[2].collidepoint(position):
+                        if button[password[0]].collidepoint(position):
                             correction[0] = True
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    if event.button == 1:
-                        position = pygame.mouse.get_pos()
-                        if button[4].collidepoint(position) and correction[0]:
+                        elif button[password[1]].collidepoint(position) and correction[0]:
                             correction[1] = True
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    if event.button == 1:
-                        position = pygame.mouse.get_pos()
-                        if button[0].collidepoint(position) and correction[1]:
+                        elif button[password[2]].collidepoint(position) and correction[1]:
                             correction[2] = True
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    if event.button == 1:
-                        position = pygame.mouse.get_pos()
-                        if button[7].collidepoint(position) and correction[2]:
+                        elif button[password[3]].collidepoint(position) and correction[2]:
                             correction[3] = True
-                            result = self.check_out(correction)
+                        turns += 1
+
+                if turns >= 4:
+                    return self.check_out(correction)
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_q:
                         return True
@@ -142,25 +147,23 @@ class State:
                     if event.key == pygame.K_ESCAPE:
                         pygame.mixer.music.fadeout(const.FADEOUT_TIME)
                         sys.exit()
-            if result == 'escape':
-                return result
             pygame.transform.scale(self.screen,
                                    (2 * const.WIDTH, 2 * const.HEIGHT),
                                    real_screen)
 
-    def run_door_state1(self, real_screen):
+    def minigame_check_color(self, real_screen):
         self.screen = pygame.surface.Surface(
             (2 * const.WIDTH, 2 * const.HEIGHT))
-        clock = time.time()
         true_image = pygame.image.load(data.filepath("Game", "true.png"))
         false_image = pygame.image.load(data.filepath("Game", "false.png"))
         correction = 0
         button = {}
+        last_time = pygame.time.get_ticks()
         word, color, sur = self.change_word()
         while True:
             self.screen.fill(0)
-            self.screen.blit(sur, [250, 250])
             self.screen.blit(self.background, (0, 0))
+            self.screen.blit(sur, [200, 250])
             button[0] = self.screen.blit(false_image, [300, 200])
             button[1] = self.screen.blit(true_image, [300, 300])
             pygame.display.flip()
@@ -171,11 +174,7 @@ class State:
                         if button[0].collidepoint(position):
                             if self.check_correct(word, color) == False:
                                 correction += 1
-                        word, color, sur = self.change_word()
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    if event.button == 1:
-                        position = pygame.mouse.get_pos()
-                        if button[1].collidepoint(position):
+                        elif button[1].collidepoint(position):
                             if self.check_correct(word, color) == True:
                                 correction += 1
                         word, color, sur = self.change_word()
@@ -192,7 +191,7 @@ class State:
                         sys.exit()
             if correction >= 5 :
                 return 70
-            if time.time()-clock >= 30:
+            if self.check_time(30000, last_time):
                 return None
 
             pygame.transform.scale(self.screen,
@@ -201,7 +200,7 @@ class State:
 
     def check_out(self, correction):
         if False not in correction:
-            return 'escape'
+            return 70
         else:
             return None
 
@@ -214,7 +213,7 @@ class State:
         now_color = choice(list(color.keys()))
         now_word = choice(word)
         pygame.font.init()
-        fontObj = pygame.font.SysFont('Arial', 32)
+        fontObj = pygame.font.SysFont('Arial', 45)
         textSurfaceObj = fontObj.render(now_word, False,
                                         color[now_color])
         return now_word, now_color, textSurfaceObj
@@ -226,18 +225,17 @@ class State:
             return False
 
 
-    def run_door_state2(self, real_screen):
+    def minigame_number_order(self, real_screen):
         self.screen = pygame.surface.Surface(
             (2 * const.WIDTH, 2 * const.HEIGHT))
-        clock = time.time()
-        total = {}
         turns = 0
-        goal_number = 3
+        goal_number = 5
         correction = numpy.zeros(goal_number)
         last_word = None
         button = {}
         word_list = []
         word = {}
+        last_time = pygame.time.get_ticks()
         pygame.font.init()
         fontObj = pygame.font.SysFont('Arial', 32)
         while len(word_list) < goal_number:
@@ -279,9 +277,16 @@ class State:
                     turns = 0
                     last_word = None
                     correction = numpy.zeros(goal_number)
-            '''if time.time()-clock >= 30:
-                return None'''
+
+            if self.check_time(30000, last_time):
+                return None
 
             pygame.transform.scale(self.screen,
                                    (2 * const.WIDTH, 2 * const.HEIGHT),
                                    real_screen)
+
+    def check_time(self, tick, last_time):
+        if pygame.time.get_ticks() > last_time + tick:
+            return True
+        else:
+            return False
