@@ -16,7 +16,7 @@ class State:
         self.information = yaml.load(data.filepath("configs", "state.yaml"))
         self.background = level.background
         self.screen = pygame.surface.Surface((2 * const.WIDTH, 2 * const.HEIGHT))
-        self.start = False
+        self.exit_animation = False
 
     def animation(self, ent_exit, image_num):
         num_str = '{0:03}'.format(image_num)
@@ -26,7 +26,7 @@ class State:
                                self.real_screen)
         pygame.display.flip()
 
-        while not self.start:
+        while not self.exit_animation:
 
             if pygame.time.get_ticks() > last_time + 5:
                 if ent_exit == "enter":
@@ -41,8 +41,8 @@ class State:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     sys.exit()
-            if image_num == 71:
-                self.start = True
+            if image_num == 71 or image_num == 0:
+                self.exit_animation = True
 
             self.screen.blit(self.background, (0, 0))
             pygame.transform.scale(self.screen, (2 * const.WIDTH, 2 * const.HEIGHT),
@@ -55,6 +55,7 @@ class State:
         return_value = None
 
         self.animation("enter", 0)
+        self.exit_animation = False
 
         if self.state_name == 'shelf':
             self.run_shelf_state(real_screen)
