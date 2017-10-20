@@ -30,6 +30,7 @@ class Character(pygame.sprite.Sprite):
         self.image = self.sprite_dict['front']
         image_size = self.image.get_size()
         self.rect = pygame.rect.Rect((320, 370), (image_size[0], image_size[1]))
+        # TODO, make rect only on feet
 
 
     def update(self, game):
