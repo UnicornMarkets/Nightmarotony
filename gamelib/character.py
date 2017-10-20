@@ -23,7 +23,7 @@ class Character(pygame.sprite.Sprite):
             for num in range(1,5):
                 file_name = pic_name_lead + direct + "-0" + str(num) + ".png"
                 image = pygame.image.load(data.filepath("Game", file_name))
-                scaled_image = pygame.transform.scale(image, (80, 150))
+                scaled_image = pygame.transform.scale(image, (64, 128))
                 self.move_action[direct][num] = scaled_image
             self.sprite_dict[direct] = scaled_image
 
@@ -39,6 +39,21 @@ class Character(pygame.sprite.Sprite):
             if self.now_direction not in self.block_direction:
                 self.move(game)
                 self.change_image()
+
+        new = self.rect
+        for cell in pygame.sprite.spritecollide(self, game.walls, False):
+            cell = cell.rect
+            if last.right <= cell.left and new.right > cell.left:
+                new.right = cell.left
+            if last.left >= cell.right and new.left < cell.right:
+                new.left = cell.right
+            if last.bottom <= cell.top and new.bottom > cell.top:
+                new.bottom = cell.top
+            if last.top >= cell.bottom and new.top < cell.bottom:
+                new.top = cell.bottom
+
+        # set the camera to put the player in the middle of the screen
+        self.groups()[0].camera_x = self.rect.x - 340
 
     def change_image(self):
         self.image = self.move_action[self.direction[self.now_direction]][self.image_turn]
