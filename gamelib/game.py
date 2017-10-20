@@ -10,6 +10,7 @@ try:
     from shelf import Shelf
     from door import Door
     from state import State
+    from block import Block
     from levels import *
 except:
     from gamelib import const, data, gifimage
@@ -17,6 +18,7 @@ except:
     from gamelib.shelf import Shelf
     from gamelib.state import State
     from gamelib.door import Door
+    from gamelib.block import Block
     from gamelib.levels import *
 
 class GameWindow(object):
@@ -193,8 +195,8 @@ class Game(object):
             if result is None:
                 level_string = "level" + str(level_num)
                 result = Level(self, level_string).loop()
-                #level_num += result
-            elif result == 'escape':
+                level_num += result
+            elif result == 70:
                 self.finish_game()
 
     def finish_game(self):
@@ -204,8 +206,14 @@ class Game(object):
         while 1:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
+                    pygame.mixer.music.stop()
                     pygame.quit()
-                    return
+                    exit(0)
+
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        pygame.mixer.music.fadeout(const.FADEOUT_TIME)
+                        sys.exit()
 
             self.screen.fill((255, 255, 255))
             self.screen.blit(success, (200, 250))
@@ -224,9 +232,20 @@ class Level:
                                                 "purple map_00000.png"))
         self.sprites = game.sprites
         self.result = None
+        self.walls = pygame.sprite.Group()
         # set up params to determine which level to make
 
     def map_setup(self):
+
+        num_row = len(self.level)
+        num_col = len(self.level[0])
+
+        for row in range(num_row):
+            for col in range(num_col):
+                if self.level[row][col] == True:
+                    Block(row, col, const.BLOCK_SIZE, self.walls, self.sprites)
+
+
         #uses the level maps to generate a map that the player walks through
 
         #TODO: in self.level get all lists and iterate. Create Blocks where true

@@ -51,7 +51,7 @@ class State:
 
 
     def run_state(self, real_screen):
-        
+
         return_value = None
 
         self.animation("enter", 0)
@@ -162,7 +162,7 @@ class State:
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_q:
                     return None
             if correction >= 5 :
-                return 'escape'
+                return 70
             if time.time()-clock >= 30:
                 return None
 
