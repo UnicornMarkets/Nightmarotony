@@ -276,10 +276,11 @@ class State:
                 if 0 not in correction:
                     return 70
                 else:
-                    turns = 0
+                    return -200
+                    '''turns = 0
                     last_word = None
                     correction = numpy.zeros(goal_number)
-            '''if time.time()-clock >= 30:
+            if time.time()-clock >= 30:
                 return None'''
 
             pygame.transform.scale(self.screen,
