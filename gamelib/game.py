@@ -30,7 +30,7 @@ class GameWindow(object):
             pygame.mixer.init()
         except:
             pass
-        self.game()
+        self.intro()
 
     def intro(self):
 
@@ -352,7 +352,7 @@ class Level:
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_w:
                     self.player.standing()
-            
+
             if self.player.rect.colliderect(self.shelf.rect):
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     state = State(self, state_name='shelf')
