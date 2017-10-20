@@ -274,9 +274,7 @@ class State:
                 if 0 not in correction:
                     return 70
                 else:
-                    turns = 0
-                    last_word = None
-                    correction = numpy.zeros(goal_number)
+                    return -200
 
             if self.check_time(30000, last_time):
                 return None
