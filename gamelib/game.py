@@ -310,7 +310,12 @@ class Level:
                 if event.key == pygame.K_ESCAPE:
                     pygame.mixer.music.stop()
                     sys.exit()
-            self.player.update(self.game)
+
+            if event.type == pygame.KEYDOWN:
+                self.player.choose_direction()
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_w:
+                    self.player.standing()
 
             if self.player.rect.colliderect(self.shelf.rect):
                 if event.type == pygame.MOUSEBUTTONDOWN:
