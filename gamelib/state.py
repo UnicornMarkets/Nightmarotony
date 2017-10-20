@@ -1,6 +1,8 @@
 import pygame
 import time
 from random import choice
+import random
+import numpy
 import yaml
 try:
     import const
@@ -60,11 +62,12 @@ class State:
         if self.state_name == 'shelf':
             self.run_shelf_state(real_screen)
         if self.state_name == 'door':
-            return_value = self.run_door_state1(real_screen)
+            return_value = self.run_door_state2(real_screen)
 
         self.animation("exit", 71)
 
         return return_value
+
 
     def run_shelf_state(self, real_screen):
         self.screen =  pygame.surface.Surface(
@@ -196,3 +199,55 @@ class State:
             return True
         else:
             return False
+
+
+    def run_door_state2(self, real_screen):
+        self.screen = pygame.surface.Surface(
+            (2 * const.WIDTH, 2 * const.HEIGHT))
+        clock = time.time()
+        total = {}
+        turns = 0
+        goal_number = 3
+        correction = numpy.zeros(goal_number)
+        last_word = None
+        button = {}
+        word_list = []
+        word = {}
+        pygame.font.init()
+        fontObj = pygame.font.SysFont('Arial', 32)
+        while len(word_list) < goal_number:
+            new_word = random.randint(-99,99)
+            if new_word not in word_list:
+                word[new_word] = fontObj.render(str(new_word), False,(255, 0, 0))
+                word_list += [new_word]
+        while True:
+            self.screen.fill(0)
+            for x in range(0, len(word_list)):
+                button[x] = self.screen.blit(word[word_list[x]], [200, x*40])
+            pygame.display.flip()
+            for event in pygame.event.get():
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        position = pygame.mouse.get_pos()
+                        for x in range(0, len(word_list)):
+                            if button[x].collidepoint(position):
+                                if last_word == None or word_list[x] > last_word:
+                                    correction[turns] = 1
+                                last_word = word_list[x]
+                        turns += 1
+
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_q:
+                    return None
+            if turns >= goal_number :
+                if 0 not in correction:
+                    return 'escape'
+                else:
+                    turns = 0
+                    last_word = None
+                    correction = numpy.zeros(goal_number)
+            '''if time.time()-clock >= 30:
+                return None'''
+
+            pygame.transform.scale(self.screen,
+                                   (2 * const.WIDTH, 2 * const.HEIGHT),
+                                   real_screen)
