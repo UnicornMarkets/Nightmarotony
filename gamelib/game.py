@@ -188,12 +188,12 @@ class Game(object):
         pygame.mixer.music.play(-1)
 
     def loop(self):
-        level = None
+        result = None
         while 1:
             self.views()
             if result is None:
-                self.event_processor()
-                result = Level(self).loop()
+                #self.event_processor()
+                result = Level(self, level1).loop()
             elif result == 'escape':
                 self.finish_game()
 
@@ -233,11 +233,6 @@ class Game(object):
                     state = State(state_name='door')
                     self.result = state.run_state(self.real_screen)
 
-
-        self.screen.blit(self.screen, (0, 0))
-        pygame.transform.scale(self.screen,
-                               (2 * const.WIDTH, 2 * const.HEIGHT),
-                               self.real_screen)
         pygame.display.flip()
 
     def finish_game(self):
@@ -255,15 +250,20 @@ class Game(object):
 
 
 class Level:
-    def __init__(self, window, game, level):
+    def __init__(self, game, level):
         self.game = game
         self.window = game.window
         self.real_screen = game.real_screen
         self.screen = pygame.surface.Surface((2*const.WIDTH, 2*const.HEIGHT))
-        self.player = game.player()
+        self.player = game.player
         self.level = level
         self.background = pygame.image.load(data.filepath("Purple Minigame",
-                                                "purple map_00000.jpg"))
+                                                "purple map_00000.png"))
+        self.sprites = game.sprites
+        self.player = Character(self.sprites)
+        self.shelf = Shelf(self.sprites)
+        self.door = Door(self.sprites)
+        self.result = None
         # set up params to determine which level to make
 
     def map_setup(self):
@@ -276,22 +276,23 @@ class Level:
         # TODO: loop to keep level running
         # TODO: setup a background of purple minigame 0
         while 1:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    return
-                if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                    return
+            self.views()
+            self.event_processor()
+            if self.result:
+                return self.result
+
 
     def views(self):
-        self.sprites.update(self)
+        self.sprites.update(self.game)
         self.screen.fill(0)
-        for x in range(0, 2 * const.WIDTH // self.grass.get_width() + 1):
-            for y in range(0, 2 * const.HEIGHT // self.grass.get_height() + 1):
-                self.screen.blit(self.grass, (x * 100, y * 100))
 
+        self.screen.blit(self.background, (0, 0))
         self.screen.blit(self.player.image, self.player.rect)
         self.screen.blit(self.shelf.image, self.shelf.rect)
         self.screen.blit(self.door.image, self.door.rect)
+        pygame.transform.scale(self.screen,
+                               (2 * const.WIDTH, 2 * const.HEIGHT),
+                               self.real_screen)
         pygame.display.flip()
 
     def event_processor(self):
@@ -305,15 +306,15 @@ class Level:
                 if event.key == pygame.K_ESCAPE:
                     pygame.mixer.music.stop()
                     sys.exit()
-            self.player.update(self)
+            self.player.update(self.game)
 
             if self.player.rect.colliderect(self.shelf.rect):
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    state = State(state_name='shelf', self.level)
+                    state = State(self, state_name='shelf')
                     state.run_state(self.real_screen)
 
             if self.player.rect.colliderect(self.door.rect):
                 if event.type == pygame.MOUSEBUTTONDOWN:
 
-                    state = State(state_name='door', self.level)
+                    state = State(self, state_name='door')
                     self.result = state.run_state(self.real_screen)
