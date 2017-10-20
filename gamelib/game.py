@@ -134,7 +134,7 @@ class Intro(object):
             self.screen.blit(image, (0, 0))
 
             if image_num == 155:
-                button = self.screen.blit(startbar, (250, 400))
+                button = self.screen.blit(startbar, (300, 400))
             elif pygame.time.get_ticks() > last_time + 20:
                 image_num += 1
                 num_str = '{0:03}'.format(image_num)
@@ -202,29 +202,31 @@ class Game(object):
 
     def win_game(self):
         start_string = "Comp 2_00"
-        restartbar = pygame.image.load(data.filepath("Cover", "restartbutton.png"))
+        restartbar = pygame.transform.scale(pygame.image.load(data.filepath("Cover",
+                                                      "restart-01.png")), (118, 59))
         image_num = 0
         num_str = '{0:03}'.format(image_num)
         button = None
         image = pygame.image.load(data.filepath("Ending Sequence",
-                                            start_string + num_str + ".jpg"))
+                                            start_string + num_str + ".png"))
 
         pygame.transform.scale(self.screen, (2 * const.WIDTH, 2 * const.HEIGHT),
                                self.real_screen)
         pygame.display.update()
 
         last_time = pygame.time.get_ticks()
-        while not self.restart:
+        restart = False
+        while not restart:
 
             self.screen.blit(image, (0, 0))
 
             if image_num == 119:
-                button = self.screen.blit(restartbar, (50, 250))
+                button = self.screen.blit(restartbar, (500, 600))
             elif pygame.time.get_ticks() > last_time + 20:
                 image_num += 1
                 num_str = '{0:03}'.format(image_num)
-                image = pygame.image.load(data.filepath("Ending Image Sequence",
-                                                        start_string + num_str + ".jpg"))
+                image = pygame.image.load(data.filepath("Ending Sequence",
+                                                        start_string + num_str + ".png"))
                 last_time = pygame.time.get_ticks()
 
             pygame.transform.scale(self.screen, (2 * const.WIDTH, 2 * const.HEIGHT),
@@ -247,7 +249,7 @@ class Game(object):
                         if event.button == 1:
                             position = pygame.mouse.get_pos()
                             if button.collidepoint(position):
-                                self.start = True
+                                restart = True
 
         self.loop()
 
