@@ -1,6 +1,5 @@
 import pygame
 import sys
-import datetime as dt
 import os
 
 try:
@@ -17,11 +16,6 @@ except:
     from gamelib.shelf import Shelf
     from gamelib.state import State
     from gamelib.door import Door
-
-import tmx
-import pytmx
-from pytmx.util_pygame import load_pygame
-
 
 class GameWindow(object):
     def __init__(self):
@@ -66,10 +60,10 @@ class Transition(object):
         intro_scaled = pygame.transform.scale(intro, (700, 700))
 
         pygame.mixer.music.fadeout(const.FADEOUT_TIME)
-        start_time = dt.datetime.now()
+        start_time = pygame.time.get_ticks()
 
         while not self.move_on:
-            if dt.datetime.now() - start_time >= dt.timedelta(seconds=const.FADEOUT_TIME/1000):
+            if pygame.time.get_ticks() >= start_time + const.FADEOUT_TIME:
                 intro = pygame.image.load(data.filepath("Cover", "intro-2.png"))
                 intro_scaled = pygame.transform.scale(intro, (700, 700))
 
