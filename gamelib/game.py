@@ -10,12 +10,14 @@ try:
     from shelf import Shelf
     from door import Door
     from state import State
+    from levels import *
 except:
     from gamelib import const, data, gifimage
     from gamelib.character import Character
     from gamelib.shelf import Shelf
     from gamelib.state import State
     from gamelib.door import Door
+    from gamelib.levels import *
 
 class GameWindow(object):
     def __init__(self):
@@ -102,7 +104,6 @@ class Intro(object):
         self.window = window
         self.real_screen = window.screen
         self.screen = pygame.surface.Surface((2 * const.WIDTH, 2 * const.HEIGHT))
-        self.start_string = "nightmarotony cover_00"
         self.clock = pygame.time.Clock()
         self.clock.tick(60)
         pygame.mixer.music.load(data.filepath('Audio', 'welcome.mp3'))
@@ -112,12 +113,13 @@ class Intro(object):
 
     def loop(self):
 
+        start_string = "nightmarotony cover_00"
         startbar = pygame.image.load(data.filepath("Cover", "startbutton.png"))
         image_num = 0
         num_str = '{0:03}'.format(image_num)
         button = None
         image = pygame.image.load(data.filepath("Cover Image Sequence",
-                                                self.start_string + num_str + ".jpg"))
+                                                start_string + num_str + ".jpg"))
 
         pygame.transform.scale(self.screen, (2 * const.WIDTH, 2 * const.HEIGHT),
                                self.real_screen)
@@ -135,7 +137,7 @@ class Intro(object):
                 image_num += 1
                 num_str = '{0:03}'.format(image_num)
                 image = pygame.image.load(data.filepath("Cover Image Sequence",
-                                                        self.start_string + num_str + ".jpg"))
+                                                        start_string + num_str + ".jpg"))
                 last_time = pygame.time.get_ticks()
 
             pygame.transform.scale(self.screen, (2 * const.WIDTH, 2 * const.HEIGHT),
@@ -180,20 +182,19 @@ class Game(object):
         self.shelf = Shelf(self.sprites)
         self.door = Door(self.sprites)
         self.grass = pygame.image.load(data.filepath("Game", "grass.png"))
-        self.result = None
 
         pygame.mixer.music.load(data.filepath('Audio', 'theme.mp3'))
         pygame.mixer.music.set_volume(const.SOUND_VOLUME)
         pygame.mixer.music.play(-1)
 
     def loop(self):
-
+        level = None
         while 1:
             self.views()
-            if self.result is None:
+            if result is None:
                 self.event_processor()
-                #Level(self.window, self).loop()
-            elif self.result == 'escape':
+                result = Level(self).loop()
+            elif result == 'escape':
                 self.finish_game()
 
     def views(self):
@@ -254,28 +255,26 @@ class Game(object):
 
 
 class Level:
-    def __init__(self, window, game):
+    def __init__(self, window, game, level):
         self.game = game
-        self.window = window
-        self.real_screen = window.screen
+        self.window = game.window
+        self.real_screen = game.real_screen
         self.screen = pygame.surface.Surface((2*const.WIDTH, 2*const.HEIGHT))
-        self.clock = pygame.time.Clock()
-        self.dt = self.clock.tick(30) / 1000.0
-        self.sprites = tmx.SpriteLayer()
-        #start_cell = self.tilemap.layers['triggers'].find('player')[0]
-        self.player = Character(self.sprites)
+        self.player = game.player()
+        self.level = level
+        self.background = pygame.image.load(data.filepath("Purple Minigame",
+                                                "purple map_00000.jpg"))
         # set up params to determine which level to make
 
-    def tmxmap(self):
-        temp = os.path.abspath(os.path.dirname(__file__))
-        tiledmap_dir = os.path.normpath(os.path.join(temp, '..', 'Tilemap'))
-        tiledmap = os.path.join(tiledmap_dir, "tmx", "Dungeon.tmx")
-        self.map = tmx.load(tiledmap, self.screen.get_size())
-        self.map.layers.append(self.sprites)
+    def map_setup(self):
+        #uses the level maps to generate a map that the player walks through
+
+        #TODO: in self.level get all lists and iterate. Create Blocks where true
+        pass
 
     def loop(self):
-        # loop to keep level running
-        self.tmxmap()
+        # TODO: loop to keep level running
+        # TODO: setup a background of purple minigame 0
         while 1:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -283,6 +282,38 @@ class Level:
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                     return
 
-            self.map.update(self.dt, self)
-            self.map.draw(screen)
-            pygame.display.flip()
+    def views(self):
+        self.sprites.update(self)
+        self.screen.fill(0)
+        for x in range(0, 2 * const.WIDTH // self.grass.get_width() + 1):
+            for y in range(0, 2 * const.HEIGHT // self.grass.get_height() + 1):
+                self.screen.blit(self.grass, (x * 100, y * 100))
+
+        self.screen.blit(self.player.image, self.player.rect)
+        self.screen.blit(self.shelf.image, self.shelf.rect)
+        self.screen.blit(self.door.image, self.door.rect)
+        pygame.display.flip()
+
+    def event_processor(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.mixer.music.stop()
+                pygame.quit()
+                exit(0)
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    pygame.mixer.music.stop()
+                    sys.exit()
+            self.player.update(self)
+
+            if self.player.rect.colliderect(self.shelf.rect):
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    state = State(state_name='shelf', self.level)
+                    state.run_state(self.real_screen)
+
+            if self.player.rect.colliderect(self.door.rect):
+                if event.type == pygame.MOUSEBUTTONDOWN:
+
+                    state = State(state_name='door', self.level)
+                    self.result = state.run_state(self.real_screen)
