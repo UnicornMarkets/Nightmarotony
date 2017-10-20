@@ -18,14 +18,7 @@ class State:
         self.screen = pygame.surface.Surface((2 * const.WIDTH, 2 * const.HEIGHT))
         self.start = False
 
-    def starting_animation(self):
-        pass
-        # move animation to here
-
-
-    def run_state(self, real_screen):
-
-        image_num = 0
+    def animation(self, ent_exit, image_num):
         num_str = '{0:03}'.format(image_num)
         last_time = pygame.time.get_ticks()
         self.screen.blit(self.background, (0, 0))
@@ -36,7 +29,10 @@ class State:
         while not self.start:
 
             if pygame.time.get_ticks() > last_time + 5:
-                image_num += 1
+                if ent_exit == "enter":
+                    image_num += 1
+                if ent_exit == "exit":
+                    image_num -= 1
                 num_str = '{0:03}'.format(image_num)
                 self.background = pygame.image.load(data.filepath("Purple Minigame",
                                             "purple map_00" + num_str + ".png"))
@@ -53,10 +49,21 @@ class State:
                                    self.real_screen)
             pygame.display.flip()
 
+
+    def run_state(self, real_screen):
+        
+        return_value = None
+
+        self.animation("enter", 0)
+
         if self.state_name == 'shelf':
             self.run_shelf_state(real_screen)
         if self.state_name == 'door':
-            return self.run_door_state1(real_screen)
+            return_value = self.run_door_state1(real_screen)
+
+        self.animation("exit", 71)
+
+        return return_value
 
     def run_shelf_state(self, real_screen):
         self.screen =  pygame.surface.Surface(
