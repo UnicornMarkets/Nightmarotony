@@ -13,7 +13,7 @@ except:
 
 
 class State:
-    def __init__(self, level, state_name=None):
+    def __init__(self, level, state_name):
         self.level = level
         self.real_screen = level.real_screen
         self.state_name = state_name
@@ -21,6 +21,11 @@ class State:
         self.background = level.background
         self.screen = pygame.surface.Surface((2 * const.WIDTH, 2 * const.HEIGHT))
         self.exit_animation = False
+        self.pin = level.pin
+        pygame.mixer.music.stop()
+        pygame.mixer.music.load(data.filepath('Audio', 'mini_2.mp3'))
+        pygame.mixer.music.set_volume(const.SOUND_VOLUME)
+        pygame.mixer.music.play(-1)
 
     def animation(self, ent_exit, image_num):
         num_str = '{0:03}'.format(image_num)
@@ -32,16 +37,14 @@ class State:
 
         while not self.exit_animation:
 
-            if pygame.time.get_ticks() > last_time + 5:
-                if ent_exit == "enter":
-                    image_num += 1
-                if ent_exit == "exit":
-                    image_num -= 1
-                num_str = '{0:03}'.format(image_num)
-                self.background = pygame.image.load(data.filepath(self.level.directory,
-                                        self.level.bg_color + " map_00" + num_str + ".png"))
 
-                last_time = pygame.time.get_ticks()
+            if ent_exit == "enter":
+                image_num += 1
+            if ent_exit == "exit":
+                image_num -= 1
+            num_str = '{0:03}'.format(image_num)
+            self.background = pygame.image.load(data.filepath(self.level.directory,
+                                    self.level.bg_color + " map_00" + num_str + ".png"))
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -65,27 +68,30 @@ class State:
         if self.state_name == 'shelf':
             self.run_shelf_state(self.real_screen)
         if self.state_name == 'door':
-            return_value = self.try_out_room(self.real_screen, [1, 2, 3, 4])
-
+            return_value = self.try_out_room(self.real_screen)
+        if self.state_name == 'computer':
+            self.minigame_check_color(self.real_screen)
         self.animation("exit", 71)
+
+        pygame.mixer.music.stop()
+        pygame.mixer.music.load(data.filepath('Audio', 'theme.mp3'))
+        pygame.mixer.music.set_volume(const.SOUND_VOLUME)
+        pygame.mixer.music.play(-1)
 
         return return_value
 
     def run_shelf_state(self, real_screen):
         self.screen = pygame.surface.Surface(
             (2 * const.WIDTH, 2 * const.HEIGHT))
-        word_list = []
         shelf_info = {}
-        while len(word_list) < 5:
-            new_word = random.randint(0,9)
-            if new_word not in word_list:
-                word_list += [new_word]
-                shelf_info[new_word] = pygame.transform.scale(pygame.image.load(
-                    data.filepath("Game", "num-" + str(new_word) + ".png")), (90,50))
+        for num in self.pin:
+            shelf_info[num] = pygame.transform.scale(pygame.image.load(
+                    data.filepath("Game", "num-" + str(num) + ".png")), (90,50))
         while True:
             self.screen.blit(self.background, (0, 0))
             for y in range(0, 4):
-                self.screen.blit(shelf_info[word_list[y]],[y * 100 + 150, 300])
+                self.screen.blit(shelf_info[self.pin[y]],
+                                           [y * 100 + 150, 300])
             pygame.display.flip()
             for event in pygame.event.get():
                 if event.type == pygame.MOUSEBUTTONDOWN:
@@ -102,65 +108,64 @@ class State:
                                    (2 * const.WIDTH, 2 * const.HEIGHT),
                                    real_screen)
 
-    def try_out_room(self, real_screen, password):
+    def try_out_room(self, real_screen):
         self.screen =  pygame.surface.Surface(
             (2 * const.WIDTH, 2 * const.HEIGHT))
         door_image = {}
         turns = 0
-        for id in range(0,10):
-            door_image[id] = pygame.transform.scale(pygame.image.load(
-                data.filepath("Game", "num-" + str(id) +".png")), (90,50))
+        for num in range(0, 10):
+            door_image[num] = pygame.transform.scale(pygame.image.load(
+                data.filepath("Game", "num-" + str(num) +".png")), (90,50))
         button = {}
-        correction = [False, False, False, False]
+        correction = []
         result = None
         while True:
             self.screen.fill(0)
-            for id in [0, 2, 4, 7]:
-                button[id] = self.screen.blit(door_image[id], [id * 50, 40])
             self.screen.blit(self.background, (0, 0))
             button[0] = self.screen.blit(door_image[0], [300, 500])
-            for id in range (0,3):
+            for num in range (0,3):
                 for y in range (0,3):
-                    button[y + 1 + id * 3] = self.screen.blit(door_image[y + 1 +  id * 3], [y*100+200, id*100+200])
+                    button[y + 1 + num * 3] = self.screen.blit(door_image[y + 1 +  num * 3],
+                                                              [y*100+200, num*100+200])
 
-            pygame.display.flip()
             for event in pygame.event.get():
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    if event.button == 1:
-                        position = pygame.mouse.get_pos()
-                        if button[password[0]].collidepoint(position):
-                            correction[0] = True
-                        elif button[password[1]].collidepoint(position) and correction[0]:
-                            correction[1] = True
-                        elif button[password[2]].collidepoint(position) and correction[1]:
-                            correction[2] = True
-                        elif button[password[3]].collidepoint(position) and correction[2]:
-                            correction[3] = True
-                        turns += 1
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    position = pygame.mouse.get_pos()
+                    for key, butt in button.items():
+                        if butt.collidepoint(position):
+                            correction.append(key)
+                    turns += 1
 
-                if turns >= 4:
-                    return self.check_out(correction)
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_q:
-                        return True
+                        return
+
                 if event.type == pygame.QUIT:
                     pygame.mixer.music.stop()
                     pygame.quit()
                     exit(0)
 
+            if turns >= 4:
+                return self.check_out(correction)
+
+
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         pygame.mixer.music.fadeout(const.FADEOUT_TIME)
                         sys.exit()
+
             pygame.transform.scale(self.screen,
                                    (2 * const.WIDTH, 2 * const.HEIGHT),
                                    real_screen)
+            pygame.display.flip()
 
     def minigame_check_color(self, real_screen):
         self.screen = pygame.surface.Surface(
             (2 * const.WIDTH, 2 * const.HEIGHT))
-        true_image = pygame.image.load(data.filepath("Game", "true.png"))
-        false_image = pygame.image.load(data.filepath("Game", "false.png"))
+        true_image = pygame.transform.scale(pygame.image.load(data.filepath("Game", "true.png")),
+                                            (150, 65))
+        false_image = pygame.transform.scale(pygame.image.load(data.filepath("Game", "false.png")),
+                                            (150, 65))
         correction = 0
         button = {}
         last_time = pygame.time.get_ticks()
@@ -168,9 +173,9 @@ class State:
         while True:
             self.screen.fill(0)
             self.screen.blit(self.background, (0, 0))
-            self.screen.blit(sur, [200, 250])
-            button[0] = self.screen.blit(false_image, [300, 200])
-            button[1] = self.screen.blit(true_image, [300, 300])
+            self.screen.blit(sur, [350, 200])
+            button[0] = self.screen.blit(false_image, [250, 320])
+            button[1] = self.screen.blit(true_image, [450, 320])
             pygame.display.flip()
             for event in pygame.event.get():
                 if event.type == pygame.MOUSEBUTTONDOWN:
@@ -210,10 +215,10 @@ class State:
                                    real_screen)
 
     def check_out(self, correction):
-        if False not in correction:
-            return 70
+        if correction == self.pin:
+            return random.randint(1, 12)
         else:
-            return None
+            return -1
 
     def change_word(self):
         color_red = (255, 0, 0)
@@ -224,7 +229,7 @@ class State:
         now_color = choice(list(color.keys()))
         now_word = choice(word)
         pygame.font.init()
-        fontObj = pygame.font.SysFont('Arial', 45)
+        fontObj = pygame.font.SysFont('Arial', 75)
         textSurfaceObj = fontObj.render(now_word, False,
                                         color[now_color])
         return now_word, now_color, textSurfaceObj
