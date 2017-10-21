@@ -2,13 +2,14 @@ import pygame
 import sys
 import os
 import random
+import copy
 
 try:
     import const
     import data
     import gifimage
     from character import Character
-    from objects import Shelf, Door, Block
+    from objects import Shelf, Door, Block, VRgoggles, Computer
     from state import State
     from levels import level_dict, corner_dict
 except:
@@ -21,7 +22,7 @@ except:
 class GameWindow(object):
     def __init__(self):
         self.clock = pygame.time.Clock()
-        self.dt = self.clock.tick(60) / 300.0
+        self.dt = self.clock.tick(45) / 300.0
         pygame.display.set_caption('Nightmarotony')
         self.real_screen = pygame.display.set_mode((2 * const.WIDTH, 2 * const.HEIGHT))
 
@@ -37,7 +38,7 @@ class GameWindow(object):
             self.transition()
 
     def transition(self):
-        move_on = Transition(self).loop('intro.png')
+        move_on = Transition(self).loop('intro.png', "transition.wav")
         if move_on:
             self.game()
 
@@ -50,8 +51,7 @@ class Intro(object):
         self.window = window
         self.real_screen = window.real_screen
         self.screen = pygame.surface.Surface((2 * const.WIDTH, 2 * const.HEIGHT))
-        self.clock = pygame.time.Clock()
-        self.clock.tick(60)
+        self.clock = window.clock
         pygame.mixer.music.load(data.filepath('Audio', 'welcome.mp3'))
         pygame.mixer.music.set_volume(const.SOUND_VOLUME)
         pygame.mixer.music.play(-1)
@@ -115,7 +115,7 @@ class Transition(object):
         self.screen = pygame.surface.Surface((2 * const.WIDTH, 2 * const.HEIGHT))
         self.move_on = False
 
-    def loop(self, filename):
+    def loop(self, filename, audio_file):
         img = pygame.image.load(data.filepath("Transitions", filename))
         img = pygame.transform.scale(img, (700, 700))
         click = pygame.image.load(data.filepath("Transitions", "click.png"))
@@ -127,8 +127,8 @@ class Transition(object):
         pygame.display.flip()
 
         pygame.mixer.music.fadeout(const.FADEOUT_TIME)
-        pygame.mixer.music.load(data.filepath("Audio", "transition.wav"))
-        pygame.mixer.music.set_volume(const.SOUND_VOLUME / 6)
+        pygame.mixer.music.load(data.filepath("Audio", audio_file))
+        pygame.mixer.music.set_volume(const.SOUND_VOLUME / 8)
         pygame.mixer.music.play(-1)
         click_time = pygame.time.get_ticks()
 
@@ -172,32 +172,35 @@ class Game(object):
 
     def loop(self):
         level_num = 1
+        game_level = 1
         color_list = ['blue', 'green', 'purple']
 
         while 1:
             color = random.choice(color_list)
-            if level_num > 0 and level_num <= 70:
+            if level_num > 0 and level_num <= 70 and game_level <= 8:
                 pygame.mixer.music.load(data.filepath('Audio', 'theme.mp3'))
                 pygame.mixer.music.set_volume(const.SOUND_VOLUME)
                 pygame.mixer.music.play(-1)
 
-                level_string = "level_" + str(level_num)
-                result = Level(self, level_string, color).loop()
-                level_num += result
-                move_on = Transition(self).loop('transition_1.png')
+                level_str = "level_" + str(level_num)
+                result = Level(self, level_str, level_num, color).loop()
 
-            elif level_num > 70:
-                pygame.mixer.music.load(data.filepath('Audio', 'win.wav'))
-                pygame.mixer.music.set_volume(const.SOUND_VOLUME / 2)
-                pygame.mixer.music.play(-1)
-                self.win_game()
+                transition_str = 'transition_' + str(game_level) + '.png'
+                move_on = Transition(self).loop(transition_str, "transition.wav")
+                level_num += result
+                game_level += 1
 
             elif level_num <= 0:
                 pygame.mixer.music.load(data.filepath('Audio', 'lose.wav'))
                 pygame.mixer.music.set_volume(const.SOUND_VOLUME / 2)
                 pygame.mixer.music.play(-1)
-
                 self.lose_game()
+
+            elif game_level > 8 or level_num > 70:
+                pygame.mixer.music.load(data.filepath('Audio', 'win.wav'))
+                pygame.mixer.music.set_volume(const.SOUND_VOLUME / 2)
+                pygame.mixer.music.play(-1)
+                self.win_game()
 
     def win_game(self):
         start_string = "YOU WON_00"
@@ -206,7 +209,7 @@ class Game(object):
 
         self.animate(start_string, directory, image_count)
 
-        self.loop()
+        self.window.game()
 
     def lose_game(self):
         start_string = "YOU LOST_00"
@@ -215,7 +218,7 @@ class Game(object):
 
         self.animate(start_string, directory, image_count)
 
-        self.loop()
+        self.window.game()
 
     def animate(self, start_string, directory, image_count):
         restartbar = pygame.transform.scale(pygame.image.load(data.filepath("Cover",
@@ -274,7 +277,7 @@ class ScrolledGroup(pygame.sprite.Group):
                                         sprite.rect.y - self.camera_y))
 
 class Level:
-    def __init__(self, game, level_string, bg_color):
+    def __init__(self, game, level_string, level_number, bg_color):
         if bg_color == 'blue':
             self.directory = 'Blue Minigame'
         elif bg_color == 'purple':
@@ -284,19 +287,21 @@ class Level:
         elif bg_color == 'red':
             self.directory = 'Red Minigame'
         self.bg_color = bg_color
+        self.level_number = level_number
         self.game = game
         self.window = game.window
         self.real_screen = game.real_screen
         self.screen = pygame.surface.Surface((2*const.WIDTH, 2*const.HEIGHT))
         self.level = level_dict[level_string]
-        self.corners = corner_dict[level_string]
+        self.corners = copy.deepcopy(corner_dict[level_string])
         random.shuffle(self.corners)
         self.background = pygame.image.load(data.filepath(self.directory,
                                             self.bg_color + " map_00000.png"))
         self.dt = game.dt
         self.result = None
         self.sprites = ScrolledGroup()
-        self.objects = [Door, Shelf]
+        self.objects = [Door, Shelf, VRgoggles, Computer]
+        self.pin_code = [random.randint(0, 9) for _ in range(4)]
 
     def player_setup(self):
         self.sprites.camera_x = 0
@@ -310,11 +315,13 @@ class Level:
         self.object_group = pygame.sprite.Group()
         for thing in self.objects:
             x, y = self.corners.pop()
-            trinket = thing(x * const.BLOCK_SIZE, y * const.BLOCK_SIZE, self.object_group)
+            trinket = thing(x * const.BLOCK_SIZE, y * const.BLOCK_SIZE,
+                            self.pin_code, self.object_group)
         self.sprites.add(self.object_group)
 
     def map_setup(self):
         tile_colors = ['pink', 'navy', 'purple', 'blue']
+        tile_color = random.choice(tile_colors)
 
         self.walls = pygame.sprite.Group()
         num_row = len(self.level)
@@ -324,7 +331,7 @@ class Level:
             for col in range(num_col):
                 if self.level[row][col] == True:
                     Block(row * const.BLOCK_SIZE, col * const.BLOCK_SIZE,
-                       const.BLOCK_SIZE, random.choice(tile_colors), self.walls)
+                       const.BLOCK_SIZE, tile_color, self.walls)
         self.sprites.add(self.walls)
         #uses the level maps to generate a map that the player walks through
 
@@ -338,9 +345,10 @@ class Level:
             if self.result:
                 return self.result
 
-
     def views(self):
         self.sprites.update(self)
+        if self.result:
+            return
 
         self.screen.blit(self.background, (0, 0))
         self.sprites.draw(self.screen)
@@ -367,3 +375,11 @@ class Level:
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_w:
                     self.player.standing()
+
+    def transition(self, message):
+        obj_str = 'object_' + message + '.png'
+        move_on = Transition(self).loop(obj_str, "mini_1.wav")
+        if move_on:
+            pygame.mixer.music.load(data.filepath('Audio', 'theme.mp3'))
+            pygame.mixer.music.set_volume(const.SOUND_VOLUME)
+            pygame.mixer.music.play(-1)
