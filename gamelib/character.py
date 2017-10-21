@@ -11,7 +11,7 @@ class Character(pygame.sprite.Sprite):
     def __init__(self, *groups):
         super(Character, self).__init__(*groups)
         self.sprite_dict = {}
-        self.speed = 150.0
+        self.speed = const.SPEED
         self.image_turn = 1
         self.block_direction = []
         pic_name_lead = "nightmarotony sprite-"
@@ -24,7 +24,7 @@ class Character(pygame.sprite.Sprite):
         for direct in self.direction.values():
             for num in range(1,5):
                 file_name = pic_name_lead + direct + "-0" + str(num) + ".png"
-                image = pygame.image.load(data.filepath("Game", file_name))
+                image = pygame.image.load(data.filepath("Character", file_name))
                 scaled_image = pygame.transform.scale(image, (const.CHAR_WIDTH,
                                                               const.CHAR_HEIGHT))
                 self.move_action[direct][num] = scaled_image
@@ -32,9 +32,8 @@ class Character(pygame.sprite.Sprite):
 
         self.image = self.sprite_dict['front']
         image_size = self.image.get_size()
-        self.rect = pygame.rect.Rect((const.WIDTH - const.CHAR_WIDTH,
-                                      const.HEIGHT - const.CHAR_HEIGHT),
-                                      (image_size[0], image_size[1]))
+        self.rect = pygame.rect.Rect((const.BLOCK_SIZE, const.BLOCK_SIZE),
+                                      (const.CHAR_WIDTH, const.CHAR_HEIGHT))
         # TODO, make rect only on feet
 
 
@@ -45,22 +44,34 @@ class Character(pygame.sprite.Sprite):
             if self.now_direction not in self.block_direction:
                 self.move(level)
                 self.change_image()
-        """
-        new = self.rect
+
         for cell in pygame.sprite.spritecollide(self, level.walls, False):
             cell = cell.rect
-            if last.right <= cell.left and new.right > cell.left:
-                new.right = cell.left
-            if last.left >= cell.right and new.left < cell.right:
-                new.left = cell.right
-            if last.bottom <= cell.top and new.bottom > cell.top:
-                new.bottom = cell.top
-            if last.top >= cell.bottom and new.top < cell.bottom:
-                new.top = cell.bottom
-        """
+            if last.right <= cell.left:
+                self.rect.right = cell.left
+            if last.left >= cell.right:
+                self.rect.left = cell.right
+            if last.bottom <= cell.top:
+                self.rect.bottom = cell.top
+            if last.top >= cell.bottom:
+                self.rect.top = cell.bottom
+
+        for pg_object in pygame.sprite.spritecollide(self, level.objects, False):
+            if key[pygame.K_SPACE] or key[pygame.K_RETURN]:
+                pg_object.start_game(level)
+            if last.right <= pg_object.rect.left + 5:
+                self.rect.right = pg_object.rect.left + 5
+            if last.left >= pg_object.rect.right - 5:
+                self.rect.left = pg_object.rect.right - 5
+            if last.bottom <= pg_object.rect.top + 5:
+                self.rect.bottom = pg_object.rect.top + 5
+            if last.top >= pg_object.rect.bottom - 5:
+                self.rect.top = pg_object.rect.bottom - 5
+            # use space bar to search object for minigame or level exit
+
         # set the camera to put the player in the middle of the screen
-        self.groups()[0].camera_x = self.rect.x - (const.WIDTH - const.CHAR_WIDTH)
-        self.groups()[0].camera_y = self.rect.y - (const.HEIGHT - const.CHAR_HEIGHT)
+        self.groups()[0].camera_x = self.rect.x - (const.WIDTH - 0.5 * const.CHAR_WIDTH)
+        self.groups()[0].camera_y = self.rect.y - (const.HEIGHT - 0.5 * const.CHAR_HEIGHT)
 
     def change_image(self):
         self.image = self.move_action[self.direction[self.now_direction]][self.image_turn]
@@ -92,49 +103,23 @@ class Character(pygame.sprite.Sprite):
             self.now_direction -= 8
 
     def move(self, level):
-        shelf_rect = level.shelf.rect
-        if (self.rect.colliderect(shelf_rect) and self.now_direction not in
-            self.block_direction) or not self.rect.colliderect(shelf_rect):
-            if self.now_direction == 0:
-                self.rect.y -= self.speed * level.dt
-                self.check_block(shelf_rect, 0)
-            if self.now_direction == 1:
-                self.rect.y -= sqrt((self.speed ** 2)/2) * level.dt
-                self.rect.x += sqrt((self.speed ** 2)/2) * level.dt
-                self.check_block(shelf_rect, 1)
-            if self.now_direction == 2:
-                self.rect.x += self.speed * level.dt
-                self.check_block(shelf_rect, 2)
-            if self.now_direction == 3:
-                self.rect.y += sqrt((self.speed ** 2)/2) * level.dt
-                self.rect.x += sqrt((self.speed ** 2)/2) * level.dt
-                self.check_block(shelf_rect, 3)
-            if self.now_direction == 4:
-                self.rect.y += self.speed * level.dt
-                self.check_block(shelf_rect, 4)
-            if self.now_direction == 5:
-                self.rect.y += sqrt((self.speed ** 2)/2) * level.dt
-                self.rect.x -= sqrt((self.speed ** 2)/2) * level.dt
-                self.check_block(shelf_rect, 5)
-            if self.now_direction == 6:
-                self.rect.x -= self.speed * level.dt
-                self.check_block(shelf_rect, 6)
-            if self.now_direction == 7:
-                self.rect.y -= sqrt((self.speed ** 2)/2) * level.dt
-                self.rect.x -= sqrt((self.speed ** 2)/2) * level.dt
-                self.check_block(shelf_rect, 7)
-
-    def check_block(self, shelf_rect, direction):
-        if self.rect.colliderect(shelf_rect):
-            if self.block_direction == []:
-                self.block_direction += [direction]
-                if direction - 1 < 0:
-                    self.block_direction += [direction + 7]
-                else:
-                    self.block_direction += [direction - 1]
-                if direction + 1 > 7:
-                    self.block_direction += [direction - 7]
-                else:
-                    self.block_direction += [direction + 1]
-        else:
-            self.block_direction = []
+        if self.now_direction == 0:
+            self.rect.y -= self.speed * level.dt
+        if self.now_direction == 1:
+            self.rect.y -= sqrt((self.speed ** 2)/2) * level.dt
+            self.rect.x += sqrt((self.speed ** 2)/2) * level.dt
+        if self.now_direction == 2:
+            self.rect.x += self.speed * level.dt
+        if self.now_direction == 3:
+            self.rect.y += sqrt((self.speed ** 2)/2) * level.dt
+            self.rect.x += sqrt((self.speed ** 2)/2) * level.dt
+        if self.now_direction == 4:
+            self.rect.y += self.speed * level.dt
+        if self.now_direction == 5:
+            self.rect.y += sqrt((self.speed ** 2)/2) * level.dt
+            self.rect.x -= sqrt((self.speed ** 2)/2) * level.dt
+        if self.now_direction == 6:
+            self.rect.x -= self.speed * level.dt
+        if self.now_direction == 7:
+            self.rect.y -= sqrt((self.speed ** 2)/2) * level.dt
+            self.rect.x -= sqrt((self.speed ** 2)/2) * level.dt

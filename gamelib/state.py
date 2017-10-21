@@ -14,6 +14,7 @@ except:
 
 class State:
     def __init__(self, level, state_name=None):
+        self.level = level
         self.real_screen = level.real_screen
         self.state_name = state_name
         self.information = yaml.load(data.filepath("configs", "state.yaml"))
@@ -37,8 +38,9 @@ class State:
                 if ent_exit == "exit":
                     image_num -= 1
                 num_str = '{0:03}'.format(image_num)
-                self.background = pygame.image.load(data.filepath("Purple Minigame",
-                                                                  "purple map_00" + num_str + ".png"))
+                self.background = pygame.image.load(data.filepath(self.level.directory,
+                                        self.level.bg_color + " map_00" + num_str + ".png"))
+
                 last_time = pygame.time.get_ticks()
 
             for event in pygame.event.get():
@@ -52,7 +54,8 @@ class State:
                                    self.real_screen)
             pygame.display.flip()
 
-    def run_state(self, real_screen):
+
+    def run_state(self):
 
         return_value = None
 
@@ -60,9 +63,9 @@ class State:
         self.exit_animation = False
 
         if self.state_name == 'shelf':
-            self.run_shelf_state(real_screen)
+            self.run_shelf_state(self.real_screen)
         if self.state_name == 'door':
-            return_value = self.try_out_room(real_screen, [1, 2, 3, 4])
+            return_value = self.try_out_room(self.real_screen, [1, 2, 3, 4])
 
         self.animation("exit", 71)
 

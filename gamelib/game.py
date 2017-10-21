@@ -190,6 +190,7 @@ class Game(object):
 
     def loop(self):
         level_num = 1
+        color_list = ['blue', 'green', 'red', 'purple']
 
         while 1:
             if level_num > 0 and level_num <= 70:
@@ -198,7 +199,7 @@ class Game(object):
                 pygame.mixer.music.play(-1)
 
                 level_string = "level" + str(level_num)
-                result = Level(self, level_string).loop()
+                result = Level(self, level_string, 'blue').loop()
                 level_num += result
                 #Transition(self).loop('transition')
 
@@ -216,9 +217,9 @@ class Game(object):
                 self.lose_game()
 
     def win_game(self):
-        start_string = "Comp 2_00"
-        directory = "Ending Sequence"
-        image_count = 119
+        start_string = "YOU WON_00"
+        directory = "End Sequence YOU WON"
+        image_count = 215
 
         self.animate(start_string, directory, image_count)
 
@@ -290,24 +291,36 @@ class ScrolledGroup(pygame.sprite.Group):
                                         sprite.rect.y - self.camera_y))
 
 class Level:
-    def __init__(self, game, level_string):
+    def __init__(self, game, level_string, bg_color):
+        if bg_color == 'blue':
+            self.directory = 'Blue Minigame'
+            self.tile_color = 'pink'
+        elif bg_color == 'purple':
+            self.directory = 'Purple Minigame'
+            self.tile_color = 'navy'
+        elif bg_color == 'green':
+            self.directory = 'Green Minigame'
+            self.tile_color = 'purple'
+            self.tile_color
+        elif bg_color == 'red':
+            self.directory = 'Red Minigame'
+            self.tile_color = 'blue'
+        self.bg_color = bg_color
         self.game = game
         self.window = game.window
         self.real_screen = game.real_screen
         self.screen = pygame.surface.Surface((2*const.WIDTH, 2*const.HEIGHT))
         self.level = eval(level_string)
+        self.background = pygame.image.load(data.filepath(self.directory,
+                                            self.bg_color + " map_00000.png"))
         self.dt = game.dt
-        self.background = pygame.image.load(data.filepath("Purple Minigame",
-                                                      "purple map_00000.png"))
         self.result = None
-        self.sprites = pygame.sprite.Group()
+        self.sprites = ScrolledGroup()
 
     def player_setup(self):
-        self.player_sprite = ScrolledGroup()
-        self.player_sprite.camera_x = 0
-        self.player_sprite.camera_y = 0
-        self.player = Character(self.player_sprite)
-        self.sprites.add(self.player_sprite)
+        self.sprites.camera_x = 0
+        self.sprites.camera_y = 0
+        self.player = Character(self.sprites)
 
     def object_setup(self):
         # add objects into the map_
@@ -326,8 +339,7 @@ class Level:
             for col in range(num_col):
                 if self.level[row][col] == True:
                     Block(row * const.BLOCK_SIZE, col * const.BLOCK_SIZE,
-                                const.BLOCK_SIZE, self.walls, self.sprites)
-
+                          const.BLOCK_SIZE, self.tile_color, self.walls)
         self.sprites.add(self.walls)
         #uses the level maps to generate a map that the player walks through
 
@@ -347,7 +359,6 @@ class Level:
 
         self.screen.blit(self.background, (0, 0))
         self.sprites.draw(self.screen)
-        self.player_sprite.draw(self.screen)
 
         pygame.transform.scale(self.screen,
                                (2 * const.WIDTH, 2 * const.HEIGHT),
@@ -371,14 +382,3 @@ class Level:
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_w:
                     self.player.standing()
-
-            if self.player.rect.colliderect(self.shelf.rect):
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    state = State(self, state_name='shelf')
-                    state.run_state(self.real_screen)
-
-            if self.player.rect.colliderect(self.door.rect):
-                if event.type == pygame.MOUSEBUTTONDOWN:
-
-                    state = State(self, state_name='door')
-                    self.result = state.run_state(self.real_screen)
