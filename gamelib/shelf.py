@@ -1,9 +1,10 @@
 import pygame
 try:
-    from gamelib import data, const
+    from gamelib import data, const, state
 except:
     import data
     import const
+    import state
 from math import sqrt
 
 class Shelf(pygame.sprite.Sprite):
@@ -11,5 +12,8 @@ class Shelf(pygame.sprite.Sprite):
         super(Shelf, self).__init__(*groups)
         self.image = pygame.transform.scale(pygame.image.load(data.filepath(
                      "Game", "shelf.png")), (const.BLOCK_SIZE, const.BLOCK_SIZE))
-        self.rect = pygame.rect.Rect((const.BLOCK_SIZE, 6 * const.BLOCK_SIZE),
+        self.rect = pygame.rect.Rect((6 * const.BLOCK_SIZE, const.BLOCK_SIZE),
                                                          self.image.get_size())
+
+    def start_game(self, level):
+        state.State(level, state_name='shelf').run_state()

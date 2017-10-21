@@ -53,7 +53,7 @@ class State:
             pygame.display.flip()
 
 
-    def run_state(self, real_screen):
+    def run_state(self):
 
         return_value = None
 
@@ -61,9 +61,9 @@ class State:
         self.exit_animation = False
 
         if self.state_name == 'shelf':
-            self.run_shelf_state(real_screen)
+            self.run_shelf_state(self.real_screen)
         if self.state_name == 'door':
-            return_value = self.try_out_room(real_screen, [1, 2, 3, 4])
+            return_value = self.try_out_room(self.real_screen, [1, 2, 3, 4])
 
         self.animation("exit", 71)
 

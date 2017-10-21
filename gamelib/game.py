@@ -363,14 +363,3 @@ class Level:
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_w:
                     self.player.standing()
-
-            if self.player.rect.colliderect(self.shelf.rect):
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    state = State(self, state_name='shelf')
-                    state.run_state(self.real_screen)
-
-            if self.player.rect.colliderect(self.door.rect):
-                if event.type == pygame.MOUSEBUTTONDOWN:
-
-                    state = State(self, state_name='door')
-                    self.result = state.run_state(self.real_screen)
