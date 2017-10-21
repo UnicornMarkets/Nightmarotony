@@ -173,9 +173,9 @@ class State:
         while True:
             self.screen.fill(0)
             self.screen.blit(self.background, (0, 0))
-            self.screen.blit(sur, [350, 200])
-            button[0] = self.screen.blit(false_image, [250, 320])
-            button[1] = self.screen.blit(true_image, [450, 320])
+            self.screen.blit(sur, [300, 200])
+            button[0] = self.screen.blit(false_image, [200, 320])
+            button[1] = self.screen.blit(true_image, [400, 320])
             pygame.display.flip()
             for event in pygame.event.get():
                 if event.type == pygame.MOUSEBUTTONDOWN:
