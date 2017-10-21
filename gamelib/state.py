@@ -4,6 +4,7 @@ from random import choice
 import random
 import numpy
 import yaml
+
 try:
     import const
     import data
@@ -37,7 +38,7 @@ class State:
                     image_num -= 1
                 num_str = '{0:03}'.format(image_num)
                 self.background = pygame.image.load(data.filepath("Purple Minigame",
-                                            "purple map_00" + num_str + ".png"))
+                                                                  "purple map_00" + num_str + ".png"))
                 last_time = pygame.time.get_ticks()
 
             for event in pygame.event.get():
@@ -50,7 +51,6 @@ class State:
             pygame.transform.scale(self.screen, (2 * const.WIDTH, 2 * const.HEIGHT),
                                    self.real_screen)
             pygame.display.flip()
-
 
     def run_state(self, real_screen):
 
@@ -68,9 +68,8 @@ class State:
 
         return return_value
 
-
     def run_shelf_state(self, real_screen):
-        self.screen =  pygame.surface.Surface(
+        self.screen = pygame.surface.Surface(
             (2 * const.WIDTH, 2 * const.HEIGHT))
         word_list = []
         shelf_info = {}
@@ -113,11 +112,14 @@ class State:
         result = None
         while True:
             self.screen.fill(0)
+            for id in [0, 2, 4, 7]:
+                button[id] = self.screen.blit(door_image[id], [id * 50, 40])
             self.screen.blit(self.background, (0, 0))
             button[0] = self.screen.blit(door_image[0], [300, 500])
             for id in range (0,3):
                 for y in range (0,3):
                     button[y + 1 + id * 3] = self.screen.blit(door_image[y + 1 +  id * 3], [y*100+200, id*100+200])
+
             pygame.display.flip()
             for event in pygame.event.get():
                 if event.type == pygame.MOUSEBUTTONDOWN:
@@ -172,10 +174,15 @@ class State:
                     if event.button == 1:
                         position = pygame.mouse.get_pos()
                         if button[0].collidepoint(position):
-                            if self.check_correct(word, color) == False:
+                            if self.check_correct(word, color) is False:
                                 correction += 1
-                        elif button[1].collidepoint(position):
-                            if self.check_correct(word, color) == True:
+                        word, color, sur = self.change_word()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        position = pygame.mouse.get_pos()
+                        if button[1].collidepoint(position):
+                            if self.check_correct(word, color) is True:
+
                                 correction += 1
                         word, color, sur = self.change_word()
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_q:
@@ -189,8 +196,9 @@ class State:
                     if event.key == pygame.K_ESCAPE:
                         pygame.mixer.music.fadeout(const.FADEOUT_TIME)
                         sys.exit()
-            if correction >= 5 :
+            if correction >= 5:
                 return 70
+
             if self.check_time(30000, last_time):
                 return None
 
@@ -208,7 +216,7 @@ class State:
         color_red = (255, 0, 0)
         color_green = (0, 255, 0)
         color_blue = (0, 0, 255)
-        color = {'red':color_red, 'green':color_green, 'blue':color_blue}
+        color = {'red': color_red, 'green': color_green, 'blue': color_blue}
         word = ['red', 'green', 'blue']
         now_color = choice(list(color.keys()))
         now_word = choice(word)
@@ -239,14 +247,14 @@ class State:
         pygame.font.init()
         fontObj = pygame.font.SysFont('Arial', 32)
         while len(word_list) < goal_number:
-            new_word = random.randint(-99,99)
+            new_word = random.randint(-99, 99)
             if new_word not in word_list:
-                word[new_word] = fontObj.render(str(new_word), False,(255, 0, 0))
+                word[new_word] = fontObj.render(str(new_word), False, (255, 0, 0))
                 word_list += [new_word]
         while True:
             self.screen.blit(self.background, (0, 0))
             for x in range(0, len(word_list)):
-                button[x] = self.screen.blit(word[word_list[x]], [320, 240+x*40])
+                button[x] = self.screen.blit(word[word_list[x]], [320, 240 + x * 40])
             pygame.display.flip()
             for event in pygame.event.get():
                 if event.type == pygame.MOUSEBUTTONDOWN:
@@ -254,7 +262,7 @@ class State:
                         position = pygame.mouse.get_pos()
                         for x in range(0, len(word_list)):
                             if button[x].collidepoint(position):
-                                if last_word == None or word_list[x] > last_word:
+                                if last_word is None or word_list[x] > last_word:
                                     correction[turns] = 1
                                 last_word = word_list[x]
                         turns += 1
@@ -270,7 +278,7 @@ class State:
                     if event.key == pygame.K_ESCAPE:
                         pygame.mixer.music.fadeout(const.FADEOUT_TIME)
                         sys.exit()
-            if turns >= goal_number :
+            if turns >= goal_number:
                 if 0 not in correction:
                     return 70
                 else:
