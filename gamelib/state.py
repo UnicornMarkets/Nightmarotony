@@ -22,6 +22,10 @@ class State:
         self.screen = pygame.surface.Surface((2 * const.WIDTH, 2 * const.HEIGHT))
         self.exit_animation = False
         self.pin = level.pin
+        pygame.mixer.music.stop()
+        pygame.mixer.music.load(data.filepath('Audio', 'mini_2.mp3'))
+        pygame.mixer.music.set_volume(const.SOUND_VOLUME)
+        pygame.mixer.music.play(-1)
 
     def animation(self, ent_exit, image_num):
         num_str = '{0:03}'.format(image_num)
@@ -69,6 +73,11 @@ class State:
             self.minigame_check_color(self.real_screen)
         self.animation("exit", 71)
 
+        pygame.mixer.music.stop()
+        pygame.mixer.music.load(data.filepath('Audio', 'theme.mp3'))
+        pygame.mixer.music.set_volume(const.SOUND_VOLUME)
+        pygame.mixer.music.play(-1)
+
         return return_value
 
     def run_shelf_state(self, real_screen):
@@ -100,7 +109,6 @@ class State:
                                    real_screen)
 
     def try_out_room(self, real_screen):
-        password = self.pin
         self.screen =  pygame.surface.Surface(
             (2 * const.WIDTH, 2 * const.HEIGHT))
         door_image = {}
@@ -109,12 +117,10 @@ class State:
             door_image[num] = pygame.transform.scale(pygame.image.load(
                 data.filepath("Game", "num-" + str(num) +".png")), (90,50))
         button = {}
-        correction = [False, False, False, False]
+        correction = []
         result = None
         while True:
             self.screen.fill(0)
-            for num in password:
-                button[num] = self.screen.blit(door_image[num], [num * 50, 40])
             self.screen.blit(self.background, (0, 0))
             button[0] = self.screen.blit(door_image[0], [300, 500])
             for num in range (0,3):
@@ -122,38 +128,36 @@ class State:
                     button[y + 1 + num * 3] = self.screen.blit(door_image[y + 1 +  num * 3],
                                                               [y*100+200, num*100+200])
 
-            pygame.display.flip()
             for event in pygame.event.get():
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    if event.button == 1:
-                        position = pygame.mouse.get_pos()
-                        if button[password[0]].collidepoint(position):
-                            correction[0] = True
-                        elif button[password[1]].collidepoint(position) and correction[0]:
-                            correction[1] = True
-                        elif button[password[2]].collidepoint(position) and correction[1]:
-                            correction[2] = True
-                        elif button[password[3]].collidepoint(position) and correction[2]:
-                            correction[3] = True
-                        turns += 1
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    position = pygame.mouse.get_pos()
+                    for key, butt in button.items():
+                        if butt.collidepoint(position):
+                            correction.append(key)
+                    turns += 1
 
-                if turns >= 4:
-                    return self.check_out(correction)
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_q:
-                        return True
+                        return
+
                 if event.type == pygame.QUIT:
                     pygame.mixer.music.stop()
                     pygame.quit()
                     exit(0)
 
+            if turns >= 4:
+                return self.check_out(correction)
+
+
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         pygame.mixer.music.fadeout(const.FADEOUT_TIME)
                         sys.exit()
+
             pygame.transform.scale(self.screen,
                                    (2 * const.WIDTH, 2 * const.HEIGHT),
                                    real_screen)
+            pygame.display.flip()
 
     def minigame_check_color(self, real_screen):
         self.screen = pygame.surface.Surface(
@@ -211,7 +215,7 @@ class State:
                                    real_screen)
 
     def check_out(self, correction):
-        if False not in correction:
+        if correction == self.pin:
             return random.randint(1, 12)
         else:
             return -1

@@ -2,7 +2,7 @@ WIDTH = 350
 HEIGHT = 350
 
 SOUND_VOLUME = 0.5 # between 0.0 to 1.0
-FADEOUT_TIME = 1500 # in milliseconds
+FADEOUT_TIME = 500 # in milliseconds
 
 game_factor = 1.5
 BLOCK_SIZE = int(192 * game_factor)

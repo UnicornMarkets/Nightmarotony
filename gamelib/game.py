@@ -38,7 +38,7 @@ class GameWindow(object):
             self.transition()
 
     def transition(self):
-        move_on = Transition(self).loop('intro.png', "transition.wav")
+        move_on = Transition(self).loop('intro.png', "transition.wav", const.FADEOUT_TIME)
         if move_on:
             self.game()
 
@@ -115,7 +115,7 @@ class Transition(object):
         self.screen = pygame.surface.Surface((2 * const.WIDTH, 2 * const.HEIGHT))
         self.move_on = False
 
-    def loop(self, filename, audio_file):
+    def loop(self, filename, audio_file, fadeout):
         img = pygame.image.load(data.filepath("Transitions", filename))
         img = pygame.transform.scale(img, (700, 700))
         click = pygame.image.load(data.filepath("Transitions", "click.png"))
@@ -126,7 +126,7 @@ class Transition(object):
                                self.real_screen)
         pygame.display.flip()
 
-        pygame.mixer.music.fadeout(const.FADEOUT_TIME)
+        pygame.mixer.music.fadeout(fadeout)
         pygame.mixer.music.load(data.filepath("Audio", audio_file))
         pygame.mixer.music.set_volume(const.SOUND_VOLUME / 8)
         pygame.mixer.music.play(-1)
@@ -190,7 +190,7 @@ class Game(object):
                     transition_str = 'transition_' + str(game_level) + '.png'
                 else:
                     transition_str = 'lost.png'
-                move_on = Transition(self).loop(transition_str, "transition.wav")
+                move_on = Transition(self).loop(transition_str, "transition.wav", const.FADEOUT_TIME)
 
                 game_level += 1
 
@@ -344,7 +344,6 @@ class Level:
         self.map_setup()
         self.object_setup()
         while 1:
-            print(self.pin)
             self.views()
             self.event_processor()
             if self.result:
@@ -383,7 +382,7 @@ class Level:
 
     def transition(self, message):
         obj_str = 'object_' + message + '.png'
-        move_on = Transition(self).loop(obj_str, "mini_1.wav")
+        move_on = Transition(self).loop(obj_str, "mini_1.wav", 0)
         if move_on:
             pygame.mixer.music.load(data.filepath('Audio', 'theme.mp3'))
             pygame.mixer.music.set_volume(const.SOUND_VOLUME)
