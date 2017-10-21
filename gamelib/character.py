@@ -11,7 +11,7 @@ class Character(pygame.sprite.Sprite):
     def __init__(self, *groups):
         super(Character, self).__init__(*groups)
         self.sprite_dict = {}
-        self.speed = 150.0
+        self.speed = const.SPEED
         self.image_turn = 1
         self.block_direction = []
         pic_name_lead = "nightmarotony sprite-"
@@ -33,7 +33,7 @@ class Character(pygame.sprite.Sprite):
         self.image = self.sprite_dict['front']
         image_size = self.image.get_size()
         self.rect = pygame.rect.Rect((const.BLOCK_SIZE, const.BLOCK_SIZE),
-                                      (image_size[0], image_size[1]))
+                                      (const.CHAR_WIDTH, const.CHAR_HEIGHT))
         # TODO, make rect only on feet
 
 
@@ -45,21 +45,20 @@ class Character(pygame.sprite.Sprite):
                 self.move(level)
                 self.change_image()
 
-        new = self.rect
         for cell in pygame.sprite.spritecollide(self, level.walls, False):
             cell = cell.rect
-            if last.right <= cell.left and new.right > cell.left:
-                new.right = cell.left
-            if last.left >= cell.right and new.left < cell.right:
-                new.left = cell.right
-            if last.bottom <= cell.top and new.bottom > cell.top:
-                new.bottom = cell.top
-            if last.top >= cell.bottom and new.top < cell.bottom:
-                new.top = cell.bottom
+            if last.right <= cell.left:
+                self.rect.right = cell.left
+            if last.left >= cell.right:
+                self.rect.left = cell.right
+            if last.bottom <= cell.top:
+                self.rect.bottom = cell.top
+            if last.top >= cell.bottom:
+                self.rect.top = cell.bottom
 
         # set the camera to put the player in the middle of the screen
-        self.groups()[0].camera_x = self.rect.x - 320
-        self.groups()[0].camera_y = self.rect.y - 300
+        self.groups()[0].camera_x = self.rect.x - (const.WIDTH - 0.5 * const.CHAR_WIDTH)
+        self.groups()[0].camera_y = self.rect.y - (const.HEIGHT - 0.5 * const.CHAR_HEIGHT)
 
     def change_image(self):
         self.image = self.move_action[self.direction[self.now_direction]][self.image_turn]

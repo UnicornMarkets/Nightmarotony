@@ -275,12 +275,17 @@ class Level:
     def __init__(self, game, level_string, bg_color):
         if bg_color == 'blue':
             self.directory = 'Blue Minigame'
+            self.tile_color = 'pink'
         elif bg_color == 'purple':
             self.directory = 'Purple Minigame'
+            self.tile_color = 'navy'
         elif bg_color == 'green':
             self.directory = 'Green Minigame'
+            self.tile_color = 'purple'
+            self.tile_color
         elif bg_color == 'red':
             self.directory = 'Red Minigame'
+            self.tile_color = 'blue'
         self.bg_color = bg_color
         self.game = game
         self.window = game.window
@@ -291,13 +296,12 @@ class Level:
                                             self.bg_color + " map_00000.png"))
         self.dt = game.dt
         self.result = None
-        self.sprites = pygame.sprite.Group()
+        self.sprites = ScrolledGroup()
 
     def player_setup(self):
-        self.player_sprite = ScrolledGroup()
-        self.player_sprite.camera_x = 0
-        self.player_sprite.camera_y = 0
-        self.player = Character(self.player_sprite)
+        self.sprites.camera_x = 0
+        self.sprites.camera_y = 0
+        self.player = Character(self.sprites)
         #self.sprites.add(self.player_sprite)
 
     def object_setup(self):
@@ -316,9 +320,9 @@ class Level:
         for row in range(num_row):
             for col in range(num_col):
                 if self.level[row][col] == True:
-                    Block(row * const.BLOCK_SIZE + 128, col * const.BLOCK_SIZE + 128,
-                                const.BLOCK_SIZE, self.walls, self.sprites)
-
+                    Block(row * const.BLOCK_SIZE, col * const.BLOCK_SIZE,
+                          const.BLOCK_SIZE, self.tile_color, self.walls)
+        self.sprites.add(self.walls)
         #uses the level maps to generate a map that the player walks through
 
     def loop(self):
@@ -334,11 +338,9 @@ class Level:
 
     def views(self):
         self.sprites.update(self)
-        self.player_sprite.update(self)
 
         self.screen.blit(self.background, (0, 0))
         self.sprites.draw(self.screen)
-        self.player_sprite.draw(self.screen)
 
         pygame.transform.scale(self.screen,
                                (2 * const.WIDTH, 2 * const.HEIGHT),
