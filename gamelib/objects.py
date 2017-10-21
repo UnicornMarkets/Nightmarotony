@@ -29,7 +29,7 @@ class Computer(pygame.sprite.Sprite):
         self.pin_code = pin_code
 
     def start_game(self, level):
-        state.State(level, 'computer', self).run_state()
+        state.State(level, 'computer').run_state()
 
 class Shelf(pygame.sprite.Sprite):
     def __init__(self, x, y, pin_code, *groups):
@@ -41,7 +41,7 @@ class Shelf(pygame.sprite.Sprite):
         self.pin_code = pin_code
 
     def start_game(self, level):
-        state.State(level, 'shelf', self).run_state()
+        state.State(level, 'shelf').run_state()
 
 class Door(pygame.sprite.Sprite):
     def __init__(self, x, y, pin_code, *groups):
@@ -50,10 +50,9 @@ class Door(pygame.sprite.Sprite):
                       "Game", "door.png")), (const.BLOCK_SIZE, const.BLOCK_SIZE))
         self.rect = pygame.rect.Rect((x, y), self.image.get_size())
         self.tries = 0
-        self.pin_code = pin_code
 
     def start_game(self, level):
-        result = state.State(level, 'door', self).run_state()
+        result = state.State(level, 'door').run_state()
         if result == -1:
             self.tries += 1
         elif result > 0:

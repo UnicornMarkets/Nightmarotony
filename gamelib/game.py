@@ -320,7 +320,7 @@ class Level:
         for thing in self.objects:
             x, y = self.corners.pop()
             trinket = thing(x * const.BLOCK_SIZE, y * const.BLOCK_SIZE,
-                            self.pin_code, self.object_group)
+                            self.pin, self.object_group)
         self.sprites.add(self.object_group)
 
     def map_setup(self):
@@ -344,6 +344,7 @@ class Level:
         self.map_setup()
         self.object_setup()
         while 1:
+            print(self.pin)
             self.views()
             self.event_processor()
             if self.result:

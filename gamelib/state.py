@@ -13,7 +13,7 @@ except:
 
 
 class State:
-    def __init__(self, level, state_name, obj):
+    def __init__(self, level, state_name):
         self.level = level
         self.real_screen = level.real_screen
         self.state_name = state_name
@@ -21,7 +21,7 @@ class State:
         self.background = level.background
         self.screen = pygame.surface.Surface((2 * const.WIDTH, 2 * const.HEIGHT))
         self.exit_animation = False
-        self.pin = level.pin_code
+        self.pin = level.pin
 
     def animation(self, ent_exit, image_num):
         num_str = '{0:03}'.format(image_num)
