@@ -8,7 +8,7 @@ except:
     import const
 
 class Character(pygame.sprite.Sprite):
-    def __init__(self, *groups):
+    def __init__(self, x, y, *groups):
         super(Character, self).__init__(*groups)
         self.sprite_dict = {}
         self.speed = const.SPEED
@@ -32,8 +32,7 @@ class Character(pygame.sprite.Sprite):
 
         self.image = self.sprite_dict['front']
         image_size = self.image.get_size()
-        self.rect = pygame.rect.Rect((const.BLOCK_SIZE, const.BLOCK_SIZE),
-                                      (const.CHAR_WIDTH, const.CHAR_HEIGHT))
+        self.rect = pygame.rect.Rect((x, y), (const.CHAR_WIDTH, const.CHAR_HEIGHT))
         # TODO, make rect only on feet
 
 
@@ -56,7 +55,7 @@ class Character(pygame.sprite.Sprite):
             if last.top >= cell.bottom:
                 self.rect.top = cell.bottom
 
-        for pg_object in pygame.sprite.spritecollide(self, level.objects, False):
+        for pg_object in pygame.sprite.spritecollide(self, level.object_group, False):
             if key[pygame.K_SPACE] or key[pygame.K_RETURN]:
                 pg_object.start_game(level)
             if last.right <= pg_object.rect.left + 5:
