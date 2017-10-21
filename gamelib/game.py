@@ -27,7 +27,7 @@ class GameWindow(object):
             pygame.mixer.init()
         except:
             pass
-        self.game()
+        self.intro()
 
     def intro(self):
 
