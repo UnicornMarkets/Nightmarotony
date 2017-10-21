@@ -24,7 +24,7 @@ class Character(pygame.sprite.Sprite):
         for direct in self.direction.values():
             for num in range(1,5):
                 file_name = pic_name_lead + direct + "-0" + str(num) + ".png"
-                image = pygame.image.load(data.filepath("Game", file_name))
+                image = pygame.image.load(data.filepath("Character", file_name))
                 scaled_image = pygame.transform.scale(image, (const.CHAR_WIDTH,
                                                               const.CHAR_HEIGHT))
                 self.move_action[direct][num] = scaled_image
@@ -55,6 +55,10 @@ class Character(pygame.sprite.Sprite):
                 self.rect.bottom = cell.top
             if last.top >= cell.bottom:
                 self.rect.top = cell.bottom
+
+        for cell in pygame.sprite.spritecollide(self, level.objects, False):
+            pass
+            # use space bar to search object for minigame or level exit
 
         # set the camera to put the player in the middle of the screen
         self.groups()[0].camera_x = self.rect.x - (const.WIDTH - 0.5 * const.CHAR_WIDTH)

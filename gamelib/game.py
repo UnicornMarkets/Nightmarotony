@@ -302,7 +302,6 @@ class Level:
         self.sprites.camera_x = 0
         self.sprites.camera_y = 0
         self.player = Character(self.sprites)
-        #self.sprites.add(self.player_sprite)
 
     def object_setup(self):
         # add objects into the map_
