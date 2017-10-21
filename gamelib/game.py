@@ -1,6 +1,7 @@
 import pygame
 import sys
 import os
+import random
 
 try:
     import const
@@ -30,7 +31,7 @@ class GameWindow(object):
             pygame.mixer.init()
         except:
             pass
-        self.game()
+        self.intro()
 
     def intro(self):
 
@@ -40,65 +41,13 @@ class GameWindow(object):
             self.transition()
 
     def transition(self):
-        move_on = Transition(self).loop()
+        move_on = Transition(self).loop('intro')
 
         if move_on:
             self.game()
 
     def game(self):
         Game(self).loop()
-
-
-class Transition(object):
-    def __init__(self, window):
-        self.window = window
-        self.real_screen = window.screen
-        self.screen = pygame.surface.Surface((2 * const.WIDTH, 2 * const.HEIGHT))
-        self.clock = pygame.time.Clock()
-        self.clock.tick(60)
-        self.move_on = False
-
-    def loop(self):
-
-        intro = pygame.image.load(data.filepath("Cover", "intro.png"))
-        intro_scaled = pygame.transform.scale(intro, (700, 700))
-
-        pygame.mixer.music.fadeout(const.FADEOUT_TIME)
-        start_time = pygame.time.get_ticks()
-
-        while not self.move_on:
-            if pygame.time.get_ticks() >= start_time + const.FADEOUT_TIME:
-                intro = pygame.image.load(data.filepath("Cover", "intro-2.png"))
-                intro_scaled = pygame.transform.scale(intro, (700, 700))
-
-            pygame.display.update()
-            self.screen.fill(0)
-            self.screen.blit(intro_scaled, (0, 0))
-
-            for event in pygame.event.get():
-                if event.type == pygame.KEYDOWN:
-
-                    if event.key == pygame.K_ESCAPE:
-                        sys.exit()
-
-                    elif event.key == pygame.K_SPACE:
-                        self.move_on = True
-
-                elif event.type == pygame.QUIT:
-                    sys.exit()
-
-                elif event.type == pygame.MOUSEBUTTONDOWN:
-                    self.move_on = True
-
-            if self.move_on is True:
-                pygame.mixer.music.stop()
-
-            self.screen.blit(self.screen, (0, 0))
-            pygame.transform.scale(self.screen, (2 * const.WIDTH, 2 * const.HEIGHT),
-                                   self.real_screen)
-            pygame.display.flip()
-
-        return self.move_on
 
 
 class Intro(object):
@@ -172,6 +121,65 @@ class Intro(object):
                     startsound.play()
 
 
+class Transition(object):
+    def __init__(self, window):
+        self.window = window
+        self.real_screen = window.screen
+        self.screen = pygame.surface.Surface((2 * const.WIDTH, 2 * const.HEIGHT))
+        self.clock = pygame.time.Clock()
+        self.clock.tick(60)
+        self.move_on = False
+
+    def loop(self, ltype):
+        img = pygame.image.load(data.filepath("Cover", "intro.png"))
+        img_scaled = pygame.transform.scale(img, (700, 700))
+        start_time = pygame.time.get_ticks()
+        pygame.mixer.music.fadeout(const.FADEOUT_TIME)
+
+        if ltype == 'transition':
+            img_name = "transition_" + str(random.randint(1, 18)) + ".png"
+            img = pygame.image.load(data.filepath("Transitions", img_name))
+            img_scaled = pygame.transform.scale(img, (700, 700))
+
+            pygame.mixer.music.load(data.filepath("Audio", "transition.wav"))
+            pygame.mixer.music.set_volume(const.SOUND_VOLUME)
+            pygame.mixer.music.play(-1)
+
+        while not self.move_on:
+            if ltype == 'intro':
+                if pygame.time.get_ticks() >= start_time + const.FADEOUT_TIME:
+                    img = pygame.image.load(data.filepath("Cover", "intro-2.png"))
+                    img_scaled = pygame.transform.scale(img, (700, 700))
+
+            pygame.display.update()
+            self.screen.blit(img_scaled, (0, 0))
+
+            for event in pygame.event.get():
+                if event.type == pygame.KEYDOWN:
+
+                    if event.key == pygame.K_ESCAPE:
+                        sys.exit()
+
+                    elif event.key == pygame.K_SPACE:
+                        self.move_on = True
+
+                elif event.type == pygame.QUIT:
+                    sys.exit()
+
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    self.move_on = True
+
+            if self.move_on is True:
+                pygame.mixer.music.stop()
+
+            self.screen.blit(self.screen, (0, 0))
+            pygame.transform.scale(self.screen, (2 * const.WIDTH, 2 * const.HEIGHT),
+                                   self.real_screen)
+            pygame.display.flip()
+
+        return self.move_on
+
+
 class Game(object):
     def __init__(self, window):
         self.window = window
@@ -180,21 +188,32 @@ class Game(object):
         self.clock = pygame.time.Clock()
         self.dt = self.clock.tick(30) / 1000.0
 
-        pygame.mixer.music.load(data.filepath('Audio', 'theme.mp3'))
-        pygame.mixer.music.set_volume(const.SOUND_VOLUME)
-        pygame.mixer.music.play(-1)
-
     def loop(self):
         level_num = 1
         color_list = ['blue', 'green', 'red', 'purple']
+
         while 1:
             if level_num > 0 and level_num <= 70:
+                pygame.mixer.music.load(data.filepath('Audio', 'theme.mp3'))
+                pygame.mixer.music.set_volume(const.SOUND_VOLUME)
+                pygame.mixer.music.play(-1)
+
                 level_string = "level" + str(level_num)
                 result = Level(self, level_string, 'blue').loop()
                 level_num += result
+                #Transition(self).loop('transition')
+
             elif level_num > 70:
+                pygame.mixer.music.load(data.filepath('Audio', 'win.wav'))
+                pygame.mixer.music.set_volume(const.SOUND_VOLUME)
+                pygame.mixer.music.play(-1)
                 self.win_game()
+
             elif level_num <= 0:
+                pygame.mixer.music.load(data.filepath('Audio', 'lose.wav'))
+                pygame.mixer.music.set_volume(const.SOUND_VOLUME)
+                pygame.mixer.music.play(-1)
+
                 self.lose_game()
 
     def win_game(self):
