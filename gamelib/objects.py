@@ -14,7 +14,7 @@ class VRgoggles(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(pygame.image.load(data.filepath(
                      "Game", "vrgoggles.png")), (const.BLOCK_SIZE, const.BLOCK_SIZE))
         self.rect = pygame.rect.Rect((x, y), self.image.get_size())
-        self.message = str(random.randint(1,10))
+        self.message = str(random.randint(1,9))
         self.pin_code = None
 
     def start_game(self, level):
@@ -34,8 +34,9 @@ class Computer(pygame.sprite.Sprite):
 class Shelf(pygame.sprite.Sprite):
     def __init__(self, x, y, pin_code, *groups):
         super(Shelf, self).__init__(*groups)
+        i = random.randint(1, 2)
         self.image = pygame.transform.scale(pygame.image.load(data.filepath(
-                     "Game", "shelf.png")), (const.BLOCK_SIZE, const.BLOCK_SIZE))
+                     "Bookshelf", "shelf_" + str(i) + ".png")), (const.BLOCK_SIZE, const.BLOCK_SIZE))
         self.rect = pygame.rect.Rect((x, y), self.image.get_size())
         self.pin_code = pin_code
 

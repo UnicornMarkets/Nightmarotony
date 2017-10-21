@@ -154,7 +154,7 @@ class Transition(object):
 
             self.screen.blit(img, (0, 0))
             if pygame.time.get_ticks() >= click_time + const.FADEOUT_TIME:
-                self.screen.blit(click, (340, 580))
+                self.screen.blit(click, (340, 620))
             pygame.transform.scale(self.screen, (2 * const.WIDTH, 2 * const.HEIGHT),
                                    self.real_screen)
             pygame.display.flip()
@@ -184,10 +184,14 @@ class Game(object):
 
                 level_str = "level_" + str(level_num)
                 result = Level(self, level_str, level_num, color).loop()
-
-                transition_str = 'transition_' + str(game_level) + '.png'
-                move_on = Transition(self).loop(transition_str, "transition.wav")
                 level_num += result
+
+                if level_num > 0:
+                    transition_str = 'transition_' + str(game_level) + '.png'
+                else:
+                    transition_str = 'lost.png'
+                move_on = Transition(self).loop(transition_str, "transition.wav")
+
                 game_level += 1
 
             elif level_num <= 0:
@@ -301,7 +305,7 @@ class Level:
         self.result = None
         self.sprites = ScrolledGroup()
         self.objects = [Door, Shelf, VRgoggles, Computer]
-        self.pin_code = [random.randint(0, 9) for _ in range(4)]
+        self.pin = [random.randint(0, 9) for _ in range(4)]
 
     def player_setup(self):
         self.sprites.camera_x = 0

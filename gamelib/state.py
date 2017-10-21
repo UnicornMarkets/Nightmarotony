@@ -21,7 +21,7 @@ class State:
         self.background = level.background
         self.screen = pygame.surface.Surface((2 * const.WIDTH, 2 * const.HEIGHT))
         self.exit_animation = False
-        self.obj = obj
+        self.pin = level.pin_code
 
     def animation(self, ent_exit, image_num):
         num_str = '{0:03}'.format(image_num)
@@ -75,13 +75,13 @@ class State:
         self.screen = pygame.surface.Surface(
             (2 * const.WIDTH, 2 * const.HEIGHT))
         shelf_info = {}
-        for num in self.obj.pin_code:
+        for num in self.pin:
             shelf_info[num] = pygame.transform.scale(pygame.image.load(
                     data.filepath("Game", "num-" + str(num) + ".png")), (90,50))
         while True:
             self.screen.blit(self.background, (0, 0))
             for y in range(0, 4):
-                self.screen.blit(shelf_info[self.obj.pin_code[y]],
+                self.screen.blit(shelf_info[self.pin[y]],
                                            [y * 100 + 150, 300])
             pygame.display.flip()
             for event in pygame.event.get():
@@ -100,12 +100,12 @@ class State:
                                    real_screen)
 
     def try_out_room(self, real_screen):
-        password = self.obj.pin_code
+        password = self.pin
         self.screen =  pygame.surface.Surface(
             (2 * const.WIDTH, 2 * const.HEIGHT))
         door_image = {}
         turns = 0
-        for num in range(0,10):
+        for num in range(0, 10):
             door_image[num] = pygame.transform.scale(pygame.image.load(
                 data.filepath("Game", "num-" + str(num) +".png")), (90,50))
         button = {}
@@ -113,13 +113,14 @@ class State:
         result = None
         while True:
             self.screen.fill(0)
-            for num in [0, 2, 4, 7]:
+            for num in password:
                 button[num] = self.screen.blit(door_image[num], [num * 50, 40])
             self.screen.blit(self.background, (0, 0))
             button[0] = self.screen.blit(door_image[0], [300, 500])
             for num in range (0,3):
                 for y in range (0,3):
-                    button[y + 1 + num * 3] = self.screen.blit(door_image[y + 1 +  num * 3], [y*100+200, num*100+200])
+                    button[y + 1 + num * 3] = self.screen.blit(door_image[y + 1 +  num * 3],
+                                                              [y*100+200, num*100+200])
 
             pygame.display.flip()
             for event in pygame.event.get():
@@ -168,7 +169,7 @@ class State:
         while True:
             self.screen.fill(0)
             self.screen.blit(self.background, (0, 0))
-            self.screen.blit(sur, [250, 200])
+            self.screen.blit(sur, [350, 200])
             button[0] = self.screen.blit(false_image, [250, 320])
             button[1] = self.screen.blit(true_image, [450, 320])
             pygame.display.flip()
