@@ -8,19 +8,15 @@ try:
     import data
     import gifimage
     from character import Character
-    from shelf import Shelf
-    from door import Door
+    from objects import Shelf, Door, Block
     from state import State
-    from block import Block
-    from levels import *
+    from levels import level_dict, corner_dict
 except:
     from gamelib import const, data, gifimage
     from gamelib.character import Character
-    from gamelib.shelf import Shelf
+    from gamelib.objects import Shelf, Door, Block
     from gamelib.state import State
-    from gamelib.door import Door
-    from gamelib.block import Block
-    from gamelib.levels import *
+    from gamelib.levels import level_dict, corner_dict
 
 class GameWindow(object):
     def __init__(self):
@@ -190,16 +186,17 @@ class Game(object):
 
     def loop(self):
         level_num = 1
-        color_list = ['blue', 'green', 'red', 'purple']
+        color_list = ['blue', 'green', 'purple']
 
         while 1:
+            color = random.choice(color_list)
             if level_num > 0 and level_num <= 70:
                 pygame.mixer.music.load(data.filepath('Audio', 'theme.mp3'))
                 pygame.mixer.music.set_volume(const.SOUND_VOLUME)
                 pygame.mixer.music.play(-1)
 
-                level_string = "level" + str(level_num)
-                result = Level(self, level_string, 'blue').loop()
+                level_string = "level_" + str(level_num)
+                result = Level(self, level_string, color).loop()
                 level_num += result
                 #Transition(self).loop('transition')
 
@@ -294,42 +291,44 @@ class Level:
     def __init__(self, game, level_string, bg_color):
         if bg_color == 'blue':
             self.directory = 'Blue Minigame'
-            self.tile_color = 'pink'
         elif bg_color == 'purple':
             self.directory = 'Purple Minigame'
-            self.tile_color = 'navy'
         elif bg_color == 'green':
             self.directory = 'Green Minigame'
-            self.tile_color = 'purple'
-            self.tile_color
         elif bg_color == 'red':
             self.directory = 'Red Minigame'
-            self.tile_color = 'blue'
         self.bg_color = bg_color
         self.game = game
         self.window = game.window
         self.real_screen = game.real_screen
         self.screen = pygame.surface.Surface((2*const.WIDTH, 2*const.HEIGHT))
-        self.level = eval(level_string)
+        self.level = level_dict[level_string]
+        self.corners = corner_dict[level_string]
+        random.shuffle(self.corners)
         self.background = pygame.image.load(data.filepath(self.directory,
                                             self.bg_color + " map_00000.png"))
         self.dt = game.dt
         self.result = None
         self.sprites = ScrolledGroup()
+        self.objects = [Door, Shelf]
 
     def player_setup(self):
         self.sprites.camera_x = 0
         self.sprites.camera_y = 0
-        self.player = Character(self.sprites)
+        x, y = self.corners.pop()
+        self.player = Character(x * const.BLOCK_SIZE, y * const.BLOCK_SIZE,
+                                self.sprites)
 
     def object_setup(self):
         # add objects into the map_
-        self.objects = pygame.sprite.Group()
-        self.shelf = Shelf(self.objects)
-        self.door = Door(self.objects)
-        self.sprites.add(self.objects)
+        self.object_group = pygame.sprite.Group()
+        for thing in self.objects:
+            x, y = self.corners.pop()
+            trinket = thing(x * const.BLOCK_SIZE, y * const.BLOCK_SIZE, self.object_group)
+        self.sprites.add(self.object_group)
 
     def map_setup(self):
+        tile_colors = ['pink', 'navy', 'purple', 'blue']
 
         self.walls = pygame.sprite.Group()
         num_row = len(self.level)
@@ -339,7 +338,7 @@ class Level:
             for col in range(num_col):
                 if self.level[row][col] == True:
                     Block(row * const.BLOCK_SIZE, col * const.BLOCK_SIZE,
-                          const.BLOCK_SIZE, self.tile_color, self.walls)
+                       const.BLOCK_SIZE, random.choice(tile_colors), self.walls)
         self.sprites.add(self.walls)
         #uses the level maps to generate a map that the player walks through
 

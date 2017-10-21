@@ -8,7 +8,7 @@ except:
 from math import sqrt
 
 class Door(pygame.sprite.Sprite):
-    def __init__(self, *groups):
+    def __init__(self, x, y, *groups):
         super(Door, self).__init__(*groups)
         self.image = pygame.transform.scale(pygame.image.load(data.filepath(
                       "Game", "door.png")), (const.BLOCK_SIZE, const.BLOCK_SIZE))
