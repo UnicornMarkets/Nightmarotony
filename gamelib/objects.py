@@ -51,7 +51,7 @@ class Shelf(pygame.sprite.Sprite):
         state.State(level, 'shelf').run_state()
 
 class Door(pygame.sprite.Sprite):
-    def __init__(self, x, y, pin_code, *groups):
+    def __init__(self, x, y, *groups):
         super(Door, self).__init__(*groups)
         self.image = pygame.transform.scale(pygame.image.load(data.filepath(
                       "Game", "door.png")), (const.BLOCK_SIZE, const.BLOCK_SIZE))
@@ -64,7 +64,6 @@ class Door(pygame.sprite.Sprite):
             self.tries += 1
         elif result > 0:
             level.result = result
-
         if self.tries == 3:
             level.result = -200
 

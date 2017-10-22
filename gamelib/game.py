@@ -9,13 +9,13 @@ try:
     import data
     import gifimage
     from character import Character
-    from objects import Shelf, Door, Block, VRgoggles, Computer
+    from objects import Shelf, Door, Block, VRgoggles, Computer, Phone
     from state import State
     from levels import level_dict, corner_dict
 except:
     from gamelib import const, data, gifimage
     from gamelib.character import Character
-    from gamelib.objects import Shelf, Door, Block
+    from gamelib.objects import Shelf, Door, Block, Phone, VRgoggles, Computer
     from gamelib.state import State
     from gamelib.levels import level_dict, corner_dict
 
@@ -305,7 +305,7 @@ class Level:
         self.dt = game.dt
         self.result = None
         self.sprites = ScrolledGroup()
-        self.objects = [Door, Shelf, VRgoggles, Computer]
+        self.objects = [Door, Shelf, VRgoggles, Computer, Phone]
         self.pin = [random.randint(0, 9) for _ in range(4)]
         self.color_flag = False
         self.sequence_flag = False

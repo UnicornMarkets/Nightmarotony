@@ -93,16 +93,15 @@ class State:
             shelf_info[num] = pygame.transform.scale(pygame.image.load(
                     data.filepath("Game", "num-" + str(num) + ".png")), (90,50))
 
-        text_screen = """Do your homework Tony! Then you can get the pin. \n
-                       Don't forget to match the colors to words, read your \n
-                       emails, and order all the numbers on your phone"""
+        text_screen = "Do your homework Tony! Then you can get the pin."
         pygame.font.init()
-        fontObj = pygame.font.SysFont('Arial', 75)
+        fontObj = pygame.font.SysFont('Arial', 24)
         textSurfaceObj = fontObj.render(text_screen, False,
-                                        (255, 255, 255))
+                                        (0, 0, 0))
         while True:
 
             if self.level.reading_flag and self.level.sequence_flag and self.level.color_flag:
+                self.screen.blit(self.background, (0, 0))
                 for y in range(0, 4):
                     self.screen.blit(shelf_info[self.pin[y]],
                                                [y * 100 + 150, 300])
@@ -118,13 +117,25 @@ class State:
                         if event.key == pygame.K_ESCAPE:
                             pygame.mixer.music.fadeout(const.FADEOUT_TIME)
                             sys.exit()
-                            self.screen.blit(self.background, (0, 0))
+
                 pygame.transform.scale(self.screen,
                                        (2 * const.WIDTH, 2 * const.HEIGHT),
                                        self.real_screen)
             else:
+                pygame.display.flip()
+                for event in pygame.event.get():
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        return True
+                    if event.type == pygame.QUIT:
+                        pygame.mixer.music.stop()
+                        pygame.quit()
+                        exit(0)
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_ESCAPE:
+                            pygame.mixer.music.fadeout(const.FADEOUT_TIME)
+                            sys.exit()
                 self.screen.blit(self.background, (0, 0))
-                self.screen.blit(textSurfaceObj, (200, 250))
+                self.screen.blit(textSurfaceObj, (50, 300))
                 pygame.transform.scale(self.screen,
                                        (2 * const.WIDTH, 2 * const.HEIGHT),
                                        self.real_screen)
@@ -265,11 +276,10 @@ class State:
             return False
 
 
-    def minigame_number_order(self, play_time, goal_n):
+    def minigame_number_order(self, play_time, goal_number):
         self.screen = pygame.surface.Surface(
             (2 * const.WIDTH, 2 * const.HEIGHT))
         turns = 0
-        goal_number = 5
         correction = numpy.zeros(goal_number)
         last_word = None
         button = {}
@@ -285,8 +295,13 @@ class State:
                 word_list += [new_word]
         while True:
             self.screen.blit(self.background, (0, 0))
-            for x in range(0, len(word_list)):
-                button[x] = self.screen.blit(word[word_list[x]], [320, 240 + x * 40])
+            for x in range(4):
+                for y in range(4):
+                    if word_list:
+                        button[x] = self.screen.blit(word_list.pop(), [200 + y * 40, 200 + x * 40])
+                    else:
+                        break
+                break
             pygame.display.flip()
             for event in pygame.event.get():
                 if event.type == pygame.MOUSEBUTTONDOWN:
@@ -323,6 +338,7 @@ class State:
             pygame.transform.scale(self.screen,
                                    (2 * const.WIDTH, 2 * const.HEIGHT),
                                    self.real_screen)
+
 
     def check_time(self, tick, last_time):
         if pygame.time.get_ticks() > last_time + tick:
