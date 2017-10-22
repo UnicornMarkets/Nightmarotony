@@ -9,13 +9,13 @@ try:
     import data
     import gifimage
     from character import Character
-    from objects import Shelf, Door, Block, VRgoggles, Computer
+    from objects import Shelf, Door, Block, VRgoggles, Computer, Phone
     from state import State
     from levels import level_dict, corner_dict
 except:
     from gamelib import const, data, gifimage
     from gamelib.character import Character
-    from gamelib.objects import Shelf, Door, Block
+    from gamelib.objects import Shelf, Door, Block, Phone, VRgoggles, Computer
     from gamelib.state import State
     from gamelib.levels import level_dict, corner_dict
 
@@ -183,7 +183,7 @@ class Game(object):
                 pygame.mixer.music.play(-1)
 
                 level_str = "level_" + str(level_num)
-                result = Level(self, level_str, level_num, color).loop()
+                result = Level(self, level_str, level_num, game_level, color).loop()
                 level_num += result
 
                 if level_num > 0:
@@ -281,7 +281,7 @@ class ScrolledGroup(pygame.sprite.Group):
                                         sprite.rect.y - self.camera_y))
 
 class Level:
-    def __init__(self, game, level_string, level_number, bg_color):
+    def __init__(self, game, level_string, level_number, game_level, bg_color):
         if bg_color == 'blue':
             self.directory = 'Blue Minigame'
         elif bg_color == 'purple':
@@ -293,6 +293,7 @@ class Level:
         self.bg_color = bg_color
         self.level_number = level_number
         self.game = game
+        self.game_level = game_level
         self.window = game.window
         self.real_screen = game.real_screen
         self.screen = pygame.surface.Surface((2*const.WIDTH, 2*const.HEIGHT))
@@ -304,8 +305,11 @@ class Level:
         self.dt = game.dt
         self.result = None
         self.sprites = ScrolledGroup()
-        self.objects = [Door, Shelf, VRgoggles, Computer]
+        self.objects = [Door, Shelf, VRgoggles, Computer, Phone]
         self.pin = [random.randint(0, 9) for _ in range(4)]
+        self.color_flag = False
+        self.sequence_flag = False
+        self.reading_flag = False
 
     def player_setup(self):
         self.sprites.camera_x = 0
@@ -320,7 +324,7 @@ class Level:
         for thing in self.objects:
             x, y = self.corners.pop()
             trinket = thing(x * const.BLOCK_SIZE, y * const.BLOCK_SIZE,
-                            self.pin, self.object_group)
+                            self.object_group)
         self.sprites.add(self.object_group)
 
     def map_setup(self):
@@ -383,6 +387,7 @@ class Level:
     def transition(self, message):
         obj_str = 'object_' + message + '.png'
         move_on = Transition(self).loop(obj_str, "mini_1.wav", 0)
+        self.reading_flag = True
         if move_on:
             pygame.mixer.music.load(data.filepath('Audio', 'theme.mp3'))
             pygame.mixer.music.set_volume(const.SOUND_VOLUME)
