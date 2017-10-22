@@ -33,7 +33,7 @@ class Phone(pygame.sprite.Sprite):
     def __init__(self, x, y, *groups):
         super(Phone, self).__init__(*groups)
         self.image = scale_tform(pygame.image.load(data.filepath(
-                                  "Game", "phone.png")), const.BLOCK_SIZE * 0.8)
+                                  "Game", "phone.png")), const.BLOCK_SIZE * 0.5)
         self.rect = pygame.rect.Rect((x, y), self.image.get_size())
 
     def start_game(self, level):
@@ -54,7 +54,7 @@ class Door(pygame.sprite.Sprite):
     def __init__(self, x, y, *groups):
         super(Door, self).__init__(*groups)
         self.image = scale_tform(pygame.image.load(data.filepath(
-                                   "Game", "door.png")), const.BLOCK_SIZE * 0.8)
+                                   "Game", "door.png")), const.BLOCK_SIZE)
         self.rect = pygame.rect.Rect((x, y), self.image.get_size())
         self.tries = 0
 

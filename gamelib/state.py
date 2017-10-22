@@ -13,6 +13,7 @@ except:
 
 
 class State:
+
     def __init__(self, level, state_name):
         self.level = level
         self.real_screen = level.real_screen
@@ -26,6 +27,26 @@ class State:
         pygame.mixer.music.load(data.filepath('Audio', 'mini_2.mp3'))
         pygame.mixer.music.set_volume(const.SOUND_VOLUME)
         pygame.mixer.music.play(-1)
+
+    def run_win_loss(self, pass_fail):
+
+        vic_image = pygame.image.load(data.filepath("Cover", pass_fail + '.png'))
+
+        last_time = pygame.time.get_ticks()
+
+        while 1:
+
+            if pygame.time.get_ticks() > last_time + 1000:
+                return
+            else:
+                pygame.display.flip()
+                self.screen.blit(self.background, (0, 0))
+                self.screen.blit(vic_image, (200, 250))
+                pygame.transform.scale(self.screen, (2 * const.WIDTH, 2 * const.HEIGHT),
+                                       self.real_screen)
+                pygame.display.flip()
+
+
 
     def animation(self, ent_exit, image_num):
         num_str = '{0:03}'.format(image_num)
@@ -61,8 +82,8 @@ class State:
     def run_state(self):
 
         return_value = None
-        play_time = 24000 - 2000 * self.level.game_level
-        goal_number = 2 * self.level.game_level
+        play_time = 26000 - 1500 * self.level.game_level
+        goal_number = self.level.game_level
 
         self.animation("enter", 0)
         self.exit_animation = False
@@ -70,9 +91,9 @@ class State:
         if self.state_name == 'shelf':
             self.run_shelf_state()
         if self.state_name == 'computer':
-            self.minigame_check_color(play_time)
+            self.minigame_check_color(play_time, 2 * goal_number)
         if self.state_name == 'phone':
-            self.minigame_number_order(play_time, goal_number)
+            self.minigame_number_order(play_time, goal_number + 3)
         if self.state_name == 'door':
             return_value = self.try_out_room()
 
@@ -95,7 +116,7 @@ class State:
 
         text_screen = "Do your homework Tony! Then you can get the pin."
         pygame.font.init()
-        fontObj = pygame.font.SysFont('Arial', 24)
+        fontObj = pygame.font.SysFont('Arial', 28)
         textSurfaceObj = fontObj.render(text_screen, False,
                                         (0, 0, 0))
         while True:
@@ -191,7 +212,7 @@ class State:
                                    self.real_screen)
             pygame.display.flip()
 
-    def minigame_check_color(self, play_time):
+    def minigame_check_color(self, play_time, goal_number):
         self.screen = pygame.surface.Surface(
             (2 * const.WIDTH, 2 * const.HEIGHT))
         true_image = pygame.transform.scale(pygame.image.load(data.filepath("Game", "true.png")),
@@ -235,14 +256,17 @@ class State:
                         pygame.mixer.music.fadeout(const.FADEOUT_TIME)
                         sys.exit()
 
-            if trials >= 5:
-                if correction >= 5:
+            if trials >= goal_number:
+                if correction >= goal_number:
                     self.level.color_flag = True
+                    self.run_win_loss('pass')
                     return
                 else:
+                    self.run_win_loss('fail')
                     return
 
             if self.check_time(play_time, last_time):
+                self.run_win_loss('fail')
                 return
 
             pygame.transform.scale(self.screen,
@@ -285,24 +309,25 @@ class State:
         button = {}
         word_list = []
         word = {}
+        word_loc = {}
         last_time = pygame.time.get_ticks()
         pygame.font.init()
         fontObj = pygame.font.SysFont('Arial', 32)
+        grid = []
+        for x in range(200, 500, 75):
+            for y in range(200, 500, 75):
+                grid += [(x, y)]
+        random.shuffle(grid)
         while len(word_list) < goal_number:
-            new_word = random.randint(-99, 99)
+            new_word = random.randint(-goal_number * 8, goal_number * 8)
             if new_word not in word_list:
-                word[new_word] = fontObj.render(str(new_word), False, (255, 0, 0))
+                word[new_word] = fontObj.render(str(new_word), False, (0, 0, 0))
                 word_list += [new_word]
+                word_loc[new_word] = grid.pop()
         while True:
             self.screen.blit(self.background, (0, 0))
-            if len(word_list) < 8:
-                for x in range(0, len(word_list)):
-                    button[x] = self.screen.blit(word[word_list[x]], [320, 180 + x * 40])
-            else:
-                for x in range(0, len(word_list)/2):
-                    for y in [0,1]:
-                        button[x + y * len(word_list)/2] = self.screen.blit(word[word_list[x + y * len(word_list)/2]],
-                                                                  [300 + y * 50, 180 + x * 40])
+            for x in range(0, len(word_list)):
+                button[x] = self.screen.blit(word[word_list[x]], word_loc[word_list[x]])
             pygame.display.flip()
             for event in pygame.event.get():
                 if event.type == pygame.MOUSEBUTTONDOWN:
@@ -329,11 +354,14 @@ class State:
             if turns >= goal_number:
                 if 0 not in correction:
                     self.level.sequence_flag = True
+                    self.run_win_loss('pass')
                     return
                 else:
+                    self.run_win_loss('fail')
                     return
 
-            if self.check_time(30000, last_time):
+            if self.check_time(play_time, last_time):
+                self.run_win_loss('fail')
                 return None
 
             pygame.transform.scale(self.screen,
