@@ -9,14 +9,11 @@ Members: Tony Sun, Dezhi Wang, Nathan Zhang, Stephanie Zhao, Mike Tamillow
 DEPENDENCIES:
 
 pygame
-pyscroll
-PIL
 
 You might need to install some of these before running the game:
 
   Python:     http://www.python.org/
   PyGame:     http://www.pygame.org/
-  PyOpenGL:   http://pyopengl.sf.net/
 
 
 
@@ -32,7 +29,8 @@ Othewise open a terminal / console and "cd" to the game directory and run:
 
 HOW TO PLAY THE GAME:
 
-Move tony around with the arrow buttons, or left click the mouse. Use the right click or down button to pick things up and search.
+Move tony around with the arrow buttons down button to turn around.
+Use the mouse to play the minigames, and use the space bar to search.
 
 
 
