@@ -11,8 +11,8 @@ from math import sqrt
 class VRgoggles(pygame.sprite.Sprite):
     def __init__(self, x, y, *groups):
         super(VRgoggles, self).__init__(*groups)
-        self.image = pygame.transform.scale(pygame.image.load(data.filepath(
-                     "Game", "vrgoggles.png")), (const.BLOCK_SIZE, const.BLOCK_SIZE))
+        self.image = scale_tform(pygame.image.load(data.filepath(
+                             "Game", "vrgoggles.png")), const.BLOCK_SIZE * 0.8)
         self.rect = pygame.rect.Rect((x, y), self.image.get_size())
         self.message = str(random.randint(1,9))
 
@@ -22,8 +22,8 @@ class VRgoggles(pygame.sprite.Sprite):
 class Computer(pygame.sprite.Sprite):
     def __init__(self, x, y, *groups):
         super(Computer, self).__init__(*groups)
-        self.image = pygame.transform.scale(pygame.image.load(data.filepath(
-                     "Game", "computer.png")), (const.BLOCK_SIZE, const.BLOCK_SIZE))
+        self.image = scale_tform(pygame.image.load(data.filepath(
+                              "Game", "computer.png")), const.BLOCK_SIZE * 0.8)
         self.rect = pygame.rect.Rect((x, y), self.image.get_size())
 
     def start_game(self, level):
@@ -32,8 +32,8 @@ class Computer(pygame.sprite.Sprite):
 class Phone(pygame.sprite.Sprite):
     def __init__(self, x, y, *groups):
         super(Phone, self).__init__(*groups)
-        self.image = pygame.transform.scale(pygame.image.load(data.filepath(
-                     "Game", "phone.png")), (const.BLOCK_SIZE, const.BLOCK_SIZE))
+        self.image = scale_tform(pygame.image.load(data.filepath(
+                                  "Game", "phone.png")), const.BLOCK_SIZE * 0.8)
         self.rect = pygame.rect.Rect((x, y), self.image.get_size())
 
     def start_game(self, level):
@@ -43,8 +43,8 @@ class Shelf(pygame.sprite.Sprite):
     def __init__(self, x, y, *groups):
         super(Shelf, self).__init__(*groups)
         i = random.randint(1, 2)
-        self.image = pygame.transform.scale(pygame.image.load(data.filepath(
-                     "Bookshelf", "shelf_" + str(i) + ".png")), (const.BLOCK_SIZE, const.BLOCK_SIZE))
+        self.image = scale_tform(pygame.image.load(data.filepath(
+              "Bookshelf", "shelf_" + str(i) + ".png")), const.BLOCK_SIZE * 0.8)
         self.rect = pygame.rect.Rect((x, y), self.image.get_size())
 
     def start_game(self, level):
@@ -53,8 +53,8 @@ class Shelf(pygame.sprite.Sprite):
 class Door(pygame.sprite.Sprite):
     def __init__(self, x, y, *groups):
         super(Door, self).__init__(*groups)
-        self.image = pygame.transform.scale(pygame.image.load(data.filepath(
-                      "Game", "door.png")), (const.BLOCK_SIZE, const.BLOCK_SIZE))
+        self.image = scale_tform(pygame.image.load(data.filepath(
+                                   "Game", "door.png")), const.BLOCK_SIZE * 0.8)
         self.rect = pygame.rect.Rect((x, y), self.image.get_size())
         self.tries = 0
 
@@ -74,3 +74,11 @@ class Block(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(pygame.image.load(data.filepath(
                          "maze tiles", color + "tiles-" + number + ".png")), (size, size))
         self.rect = pygame.rect.Rect((x, y), self.image.get_size())
+
+def scale_tform(image, max_size, factor=0.9):
+    size_1 = image.get_size()
+    size = list(size_1)
+    while max(size) > max_size:
+        size[0] = int(size[0] * factor)
+        size[1] = int(size[1] * factor)
+    return pygame.transform.scale(image, size)
