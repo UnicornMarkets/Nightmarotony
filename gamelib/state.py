@@ -295,13 +295,14 @@ class State:
                 word_list += [new_word]
         while True:
             self.screen.blit(self.background, (0, 0))
-            for x in range(4):
-                for y in range(4):
-                    if word_list:
-                        button[x] = self.screen.blit(word_list.pop(), [200 + y * 40, 200 + x * 40])
-                    else:
-                        break
-                break
+            if len(word_list) < 8:
+                for x in range(0, len(word_list)):
+                    button[x] = self.screen.blit(word[word_list[x]], [320, 180 + x * 40])
+            else:
+                for x in range(0, len(word_list)/2):
+                    for y in [0,1]:
+                        button[x + y * len(word_list)/2] = self.screen.blit(word[word_list[x + y * len(word_list)/2]],
+                                                                  [300 + y * 50, 180 + x * 40])
             pygame.display.flip()
             for event in pygame.event.get():
                 if event.type == pygame.MOUSEBUTTONDOWN:
@@ -338,7 +339,6 @@ class State:
             pygame.transform.scale(self.screen,
                                    (2 * const.WIDTH, 2 * const.HEIGHT),
                                    self.real_screen)
-
 
     def check_time(self, tick, last_time):
         if pygame.time.get_ticks() > last_time + tick:
