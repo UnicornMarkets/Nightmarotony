@@ -14,7 +14,7 @@ class VRgoggles(pygame.sprite.Sprite):
         self.image = scale_tform(pygame.image.load(data.filepath(
                              "Game", "vrgoggles.png")), const.BLOCK_SIZE * 0.8)
         self.rect = pygame.rect.Rect((x, y), self.image.get_size())
-        self.message = str(random.randint(1,9))
+        self.message = str(random.randint(1,7))
 
     def start_game(self, level):
         level.transition(self.message)
